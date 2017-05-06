@@ -304,7 +304,8 @@ void wmain(int argc, wchar_t* argv[])
 		auto message = error.ErrorMessage();
 
 		wprintf_s(L"Windows error: %s\n", message);
-
+		wprintf_s(L"Press Enter to exit\n");
+		
 		std::getchar();
 
 		return;
@@ -315,6 +316,7 @@ void wmain(int argc, wchar_t* argv[])
 		auto message = App::ExceptionToString(code);
 
 		wprintf_s(L"Application error: %s\n", message);
+		wprintf_s(L"Press Enter to exit\n");
 
 		std::getchar();
 
