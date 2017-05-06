@@ -27,6 +27,9 @@
     <ClInclude Include="3rd Party Libraries\MinHookCPP.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Modules\ModuleTemplates.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\DLLMain.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main\Precompiled Header\PrecompiledHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Modules\Save Load\SaveLoad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

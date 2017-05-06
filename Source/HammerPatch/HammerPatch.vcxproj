@@ -96,11 +96,13 @@
   <ItemGroup>
     <ClInclude Include="3rd Party Libraries\MinHookCPP.hpp" />
     <ClInclude Include="Application\Application.hpp" />
+    <ClInclude Include="Application\Modules\ModuleTemplates.hpp" />
     <ClInclude Include="Main\Precompiled Header\PrecompiledHeader.hpp" />
     <ClInclude Include="Main\Precompiled Header\TargetVersion.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Application.cpp" />
+    <ClCompile Include="Application\Modules\Save Load\SaveLoad.cpp" />
     <ClCompile Include="Main\DLLMain.cpp" />
     <ClCompile Include="Main\Precompiled Header\PrecompiledHeader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
