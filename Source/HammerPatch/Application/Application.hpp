@@ -23,16 +23,16 @@ namespace HAP
 	}
 
 	using ShutdownFuncType = void(*)();
-	void AddPluginShutdownFunction(ShutdownFuncType function);
+	void AddShutdownFunction(ShutdownFuncType function);
 
-	struct PluginShutdownFunctionAdder
+	struct ShutdownFunctionAdder
 	{
-		PluginShutdownFunctionAdder
+		ShutdownFunctionAdder
 		(
 			ShutdownFuncType function
 		)
 		{
-			AddPluginShutdownFunction(function);
+			AddShutdownFunction(function);
 		}
 	};
 
@@ -44,11 +44,11 @@ namespace HAP
 		FuncType Function;
 	};
 
-	void AddPluginStartupFunction(const StartupFuncData& data);
+	void AddStartupFunction(const StartupFuncData& data);
 
-	struct PluginStartupFunctionAdder
+	struct StartupFunctionAdder
 	{
-		PluginStartupFunctionAdder
+		StartupFunctionAdder
 		(
 			const char* name,
 			StartupFuncData::FuncType function
@@ -58,7 +58,7 @@ namespace HAP
 			data.Name = name;
 			data.Function = function;
 
-			AddPluginStartupFunction(data);
+			AddStartupFunction(data);
 		}
 	};
 

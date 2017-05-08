@@ -105,7 +105,7 @@ namespace
 			return true;
 		}
 
-		HAP::PluginStartupFunctionAdder Adder1
+		HAP::StartupFunctionAdder Adder1
 		(
 			"SaveLoadInit",
 			Init

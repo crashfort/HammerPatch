@@ -162,12 +162,12 @@ void HAP::LogMessageText(const char* message)
 	);
 }
 
-void HAP::AddPluginShutdownFunction(ShutdownFuncType function)
+void HAP::AddShutdownFunction(ShutdownFuncType function)
 {
 	MainApplication.OnCloseFunctions.emplace_back(function);
 }
 
-void HAP::AddPluginStartupFunction(const StartupFuncData& data)
+void HAP::AddStartupFunction(const StartupFuncData& data)
 {
 	MainApplication.StartupFunctions.emplace_back(data);
 }
