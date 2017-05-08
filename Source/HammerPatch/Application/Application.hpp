@@ -2,6 +2,73 @@
 
 namespace HAP
 {
+	void Setup();
+	void Close();
+
+	void LogMessageText(const char* message);
+
+	template <typename... Args>
+	void LogMessage(const char* format, Args&&... args)
+	{
+		if (sizeof...(args) == 0)
+		{
+			LogMessageText(format);
+			return;
+		}
+
+		char buf[256];
+		sprintf_s(buf, format, std::forward<Args>(args)...);
+
+		LogMessageText(buf);
+	}
+
+	using ShutdownFuncType = void(*)();
+	void AddPluginShutdownFunction(ShutdownFuncType function);
+
+	struct PluginShutdownFunctionAdder
+	{
+		PluginShutdownFunctionAdder
+		(
+			ShutdownFuncType function
+		)
+		{
+			AddPluginShutdownFunction(function);
+		}
+	};
+
+	struct StartupFuncData
+	{
+		using FuncType = bool(*)();
+		
+		const char* Name;
+		FuncType Function;
+	};
+
+	void AddPluginStartupFunction(const StartupFuncData& data);
+
+	struct PluginStartupFunctionAdder
+	{
+		PluginStartupFunctionAdder
+		(
+			const char* name,
+			StartupFuncData::FuncType function
+		)
+		{
+			StartupFuncData data;
+			data.Name = name;
+			data.Function = function;
+
+			AddPluginStartupFunction(data);
+		}
+	};
+
+	void CallStartupFunctions();
+
+	constexpr auto MemoryPattern(const char* input)
+	{
+		return reinterpret_cast<const uint8_t*>(input);
+	}
+
 	struct ModuleInformation
 	{
 		ModuleInformation(const char* name) : Name(name)
@@ -51,35 +118,7 @@ namespace HAP
 		virtual MH_STATUS Create() = 0;
 	};
 
-	void Setup();
-	void Close();
-
-	void LogMessageText(const char* message);
-
-	template <typename... Args>
-	void LogMessage(const char* format, Args&&... args)
-	{
-		if (sizeof...(args) == 0)
-		{
-			LogMessageText(format);
-			return;
-		}
-
-		char buf[256];
-		sprintf_s(buf, format, std::forward<Args>(args)...);
-
-		LogMessageText(buf);
-	}
-
-	constexpr auto MemoryPattern(const char* input)
-	{
-		return reinterpret_cast<const uint8_t*>(input);
-	}
-
 	void AddModule(HookModuleBase* module);
-
-	using ShutdownFuncType = void(*)();
-	void AddPluginShutdownFunction(ShutdownFuncType function);
 
 	void* GetAddressFromPattern
 	(
@@ -87,14 +126,6 @@ namespace HAP
 		const uint8_t* pattern,
 		const char* mask
 	);
-
-	struct PluginShutdownFunctionAdder
-	{
-		PluginShutdownFunctionAdder(ShutdownFuncType function)
-		{
-			AddPluginShutdownFunction(function);
-		}
-	};
 
 	template <typename FuncSignature>
 	class HookModuleMask final : public HookModuleBase

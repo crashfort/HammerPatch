@@ -22,6 +22,24 @@ namespace
 			return 1;
 		}
 
+		try
+		{
+			HAP::CallStartupFunctions();
+		}
+
+		catch (const char* name)
+		{
+			HAP::LogMessage("HAP: Startup procedure \"%s\" failed\n", name);
+
+			ShowWindow
+			(
+				GetConsoleWindow(),
+				SW_SHOWNORMAL
+			);
+
+			return 1;
+		}
+
 		HAP::LogMessageText("HAP: HammerPatch loaded\n");
 
 		return 1;

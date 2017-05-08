@@ -7,6 +7,7 @@ namespace
 	{
 		std::vector<HAP::HookModuleBase*> Modules;
 		std::vector<HAP::ShutdownFuncType> OnCloseFunctions;
+		std::vector<HAP::StartupFuncData> StartupFunctions;
 
 		struct
 		{
@@ -157,14 +158,32 @@ void HAP::LogMessageText(const char* message)
 	);
 }
 
-void HAP::AddModule(HookModuleBase* module)
-{
-	MainApplication.Modules.emplace_back(module);
-}
-
 void HAP::AddPluginShutdownFunction(ShutdownFuncType function)
 {
 	MainApplication.OnCloseFunctions.emplace_back(function);
+}
+
+void HAP::AddPluginStartupFunction(const StartupFuncData& data)
+{
+	MainApplication.StartupFunctions.emplace_back(data);
+}
+
+void HAP::CallStartupFunctions()
+{
+	for (const auto& entry : MainApplication.StartupFunctions)
+	{
+		auto res = entry.Function();
+
+		if (!res)
+		{
+			throw entry.Name;
+		}
+	}
+}
+
+void HAP::AddModule(HookModuleBase* module)
+{
+	MainApplication.Modules.emplace_back(module);
 }
 
 void* HAP::GetAddressFromPattern
