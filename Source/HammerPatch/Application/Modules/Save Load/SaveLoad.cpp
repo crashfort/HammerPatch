@@ -3,6 +3,75 @@
 
 namespace
 {
+	namespace HammerFunctions
+	{
+		namespace Types
+		{
+			using MapFaceCalcPlaneFromFacePoints = void(__fastcall*)
+			(
+				void* thisptr,
+				void* edx
+			);
+		}
+
+		Types::MapFaceCalcPlaneFromFacePoints MapFaceCalcPlaneFromFacePoints;
+
+		template <typename T>
+		void SetFromAddress(T& type, void* address)
+		{
+			type = (T)(address);
+		}
+
+		bool Init()
+		{
+			/*
+				MapFaceCalcPlaneFromFacePoints
+			*/
+			{
+				/*
+					0x1012F540 static Hammer IDA address May 8 2017
+				*/
+				HAP::AddressFinder address
+				(
+					"hammer_dll.dll",
+					HAP::MemoryPattern
+					(
+						"\x8B\xC1\x83\xB8\x00\x00\x00\x00\x00\x7C\x23\x56"
+						"\x8B\xB0\x00\x00\x00\x00\x85\xF6\x74\x17\x57\x8D"
+						"\xB8\x00\x00\x00\x00\xB9\x00\x00\x00\x00\xF3\xA5"
+						"\x5F\x8B\xC8\x5E\xE9\x00\x00\x00\x00\x5E\xC3"
+					),
+					"xxxx?????xxxxx????xxxxxxx????x????xxxxxxx????xx"
+				);
+
+				SetFromAddress
+				(
+					MapFaceCalcPlaneFromFacePoints,
+					address.Get()
+				);
+
+				HAP::LogMessage
+				(
+					"HAP: SaveLoadInit: "
+					"\"MapFaceCalcPlaneFromFacePoints\" -> "
+					"hammer_dll.dll @ 0x%p\n",
+					address.Get()
+				);
+			}
+
+			return true;
+		}
+	}
+
+	HAP::PluginStartupFunctionAdder A1
+	(
+		"SaveLoadInit",
+		HammerFunctions::Init
+	);
+}
+
+namespace
+{
 	struct ScopedFile
 	{
 		~ScopedFile()
@@ -209,75 +278,6 @@ namespace
 		std::vector<MapSolid> Solids;
 		MapSolid* CurrentSolid = nullptr;
 	} LoadData;
-}
-
-namespace
-{
-	namespace HammerFunctions
-	{
-		namespace Types
-		{
-			using MapFaceCalcPlaneFromFacePoints = void(__fastcall*)
-			(
-				void* thisptr,
-				void* edx
-			);
-		}
-
-		Types::MapFaceCalcPlaneFromFacePoints MapFaceCalcPlaneFromFacePoints;
-
-		template <typename T>
-		void SetFromAddress(T& type, void* address)
-		{
-			type = (T)(address);
-		}
-
-		bool Init()
-		{
-			/*
-				MapFaceCalcPlaneFromFacePoints
-			*/
-			{
-				/*
-					0x1012F540 static Hammer IDA address May 8 2017
-				*/
-				HAP::AddressFinder address
-				(
-					"hammer_dll.dll",
-					HAP::MemoryPattern
-					(
-						"\x8B\xC1\x83\xB8\x00\x00\x00\x00\x00\x7C\x23\x56"
-						"\x8B\xB0\x00\x00\x00\x00\x85\xF6\x74\x17\x57\x8D"
-						"\xB8\x00\x00\x00\x00\xB9\x00\x00\x00\x00\xF3\xA5"
-						"\x5F\x8B\xC8\x5E\xE9\x00\x00\x00\x00\x5E\xC3"
-					),
-					"xxxx?????xxxxx????xxxxxxx????x????xxxxxxx????xx"
-				);
-
-				SetFromAddress
-				(
-					MapFaceCalcPlaneFromFacePoints,
-					address.Get()
-				);
-
-				HAP::LogMessage
-				(
-					"HAP: SaveLoadInit: "
-					"\"MapFaceCalcPlaneFromFacePoints\" -> "
-					"hammer_dll.dll @ 0x%p\n",
-					address.Get()
-				);
-			}
-
-			return true;
-		}
-	}
-
-	HAP::PluginStartupFunctionAdder A1
-	(
-		"SaveLoadInit",
-		HammerFunctions::Init
-	);
 }
 
 namespace
