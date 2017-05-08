@@ -12,9 +12,17 @@ namespace
 				void* thisptr,
 				void* edx
 			);
+
+			using MapFaceAllocatePoints = size_t(__fastcall*)
+			(
+				void* thisptr,
+				void* edx,
+				int count
+			);
 		}
 
 		Types::MapFaceCalcPlaneFromFacePoints MapFaceCalcPlaneFromFacePoints;
+		Types::MapFaceAllocatePoints MapFaceAllocatePoints;
 
 		template <typename T>
 		void SetFromAddress(T& type, void* address)
@@ -54,6 +62,41 @@ namespace
 				(
 					"HAP: SaveLoadInit: "
 					"\"MapFaceCalcPlaneFromFacePoints\" -> "
+					"hammer_dll.dll @ 0x%p\n",
+					address.Get()
+				);
+			}
+
+			/*
+				MapFaceAllocatePoints
+			*/
+			{
+				/*
+					0x1012F370 static Hammer IDA address May 8 2017
+				*/
+				HAP::AddressFinder address
+				(
+					"hammer_dll.dll",
+					HAP::MemoryPattern
+					(
+						"\x55\x8B\xEC\x64\xA1\x00\x00\x00\x00\x6A\xFF\x68"
+						"\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00"
+						"\x56\x8B\xF1\x57\x8B\x7D\x08\x8B\x86\x00\x00\x00"
+						"\x00"
+					),
+					"xxxxx????xxx????xxxx????xxxxxxxxx????"
+				);
+
+				SetFromAddress
+				(
+					MapFaceAllocatePoints,
+					address.Get()
+				);
+
+				HAP::LogMessage
+				(
+					"HAP: SaveLoadInit: "
+					"\"MapFaceAllocatePoints\" -> "
 					"hammer_dll.dll @ 0x%p\n",
 					address.Get()
 				);
@@ -236,6 +279,16 @@ namespace
 			(
 				thisptr,
 				nullptr
+			);
+		}
+
+		static size_t AllocatePoints(void* thisptr, int count)
+		{
+			return HammerFunctions::MapFaceAllocatePoints
+			(
+				thisptr,
+				nullptr,
+				count
 			);
 		}
 
