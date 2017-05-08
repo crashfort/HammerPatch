@@ -6,7 +6,7 @@ namespace
 	struct Application
 	{
 		std::vector<HAP::HookModuleBase*> Modules;
-		std::vector<HAP::ShutdownFuncType> OnCloseFunctions;
+		std::vector<HAP::ShutdownFuncType> CloseFunctions;
 		std::vector<HAP::StartupFuncData> StartupFunctions;
 
 		struct
@@ -133,7 +133,7 @@ void HAP::Setup()
 
 void HAP::Close()
 {
-	for (auto&& func : MainApplication.OnCloseFunctions)
+	for (auto&& func : MainApplication.CloseFunctions)
 	{
 		func();
 	}
@@ -164,7 +164,7 @@ void HAP::LogMessageText(const char* message)
 
 void HAP::AddShutdownFunction(ShutdownFuncType function)
 {
-	MainApplication.OnCloseFunctions.emplace_back(function);
+	MainApplication.CloseFunctions.emplace_back(function);
 }
 
 void HAP::AddStartupFunction(const StartupFuncData& data)
