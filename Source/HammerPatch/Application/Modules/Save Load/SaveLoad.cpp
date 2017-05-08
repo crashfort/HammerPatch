@@ -230,6 +230,15 @@ namespace
 			return ret;
 		}
 
+		static void CalcPlaneFromFacePoints(void* thisptr)
+		{
+			HammerFunctions::MapFaceCalcPlaneFromFacePoints
+			(
+				thisptr,
+				nullptr
+			);
+		}
+
 		int ParentSolidID;
 		int ID;
 
