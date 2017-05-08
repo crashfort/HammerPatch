@@ -93,7 +93,11 @@ void HAP::Setup()
 		throw res;
 	}
 
-	LogMessage("HAP: Creating %d modules\n", MainApplication.Modules.size());
+	LogMessage
+	(
+		"HAP: Creating %d modules\n",
+		MainApplication.Modules.size()
+	);
 
 	for (auto module : MainApplication.Modules)
 	{
@@ -170,6 +174,12 @@ void HAP::AddPluginStartupFunction(const StartupFuncData& data)
 
 void HAP::CallStartupFunctions()
 {
+	LogMessage
+	(
+		"HAP: Calling %d startup procedures\n",
+		MainApplication.StartupFunctions.size()
+	);
+
 	for (const auto& entry : MainApplication.StartupFunctions)
 	{
 		auto res = entry.Function();
