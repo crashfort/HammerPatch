@@ -104,13 +104,13 @@ namespace
 
 			return true;
 		}
-	}
 
-	HAP::PluginStartupFunctionAdder A1
-	(
-		"SaveLoadInit",
-		HammerFunctions::Init
-	);
+		HAP::PluginStartupFunctionAdder Adder1
+		(
+			"SaveLoadInit",
+			Init
+		);
+	}
 }
 
 namespace
