@@ -22,7 +22,7 @@ namespace
 			return 1;
 		}
 
-		HAP::LogMessage("HAP: HammerPatch loaded");
+		HAP::LogMessageText("HAP: HammerPatch loaded\n");
 
 		return 1;
 	}
