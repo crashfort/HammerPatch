@@ -189,7 +189,11 @@ void HAP::CallStartupFunctions()
 			throw entry.Name;
 		}
 
-		LogMessage("HAP: Startup procedure \"%s\" passed\n", entry.Name);
+		LogMessage
+		(
+			"HAP: Startup procedure \"%s\" passed\n",
+			entry.Name
+		);
 	}
 }
 
