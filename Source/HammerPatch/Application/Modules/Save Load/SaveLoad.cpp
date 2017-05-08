@@ -234,6 +234,9 @@ namespace
 
 		bool Init()
 		{
+			/*
+				MapFaceCalcPlaneFromFacePoints
+			*/
 			{
 				/*
 					0x1012F540 static Hammer IDA address May 8 2017
@@ -254,6 +257,14 @@ namespace
 				SetFromAddress
 				(
 					MapFaceCalcPlaneFromFacePoints,
+					address.Get()
+				);
+
+				HAP::LogMessage
+				(
+					"HAP: SaveLoadInit: "
+					"\"MapFaceCalcPlaneFromFacePoints\" -> "
+					"hammer_dll.dll @ 0x%p\n",
 					address.Get()
 				);
 			}
