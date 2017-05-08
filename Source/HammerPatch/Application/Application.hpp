@@ -16,7 +16,7 @@ namespace HAP
 			return;
 		}
 
-		char buf[256];
+		char buf[1024];
 		sprintf_s(buf, format, std::forward<Args>(args)...);
 
 		LogMessageText(buf);
