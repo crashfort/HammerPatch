@@ -1202,7 +1202,7 @@ namespace
 				thisptr,
 				edx,
 				winding,
-				flags
+				0
 			);
 		}
 	}
