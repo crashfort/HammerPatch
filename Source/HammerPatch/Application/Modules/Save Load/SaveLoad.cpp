@@ -538,16 +538,17 @@ namespace
 			PathRenameExtensionA(SharedData.VertexFileName, ".hpverts");
 
 			ScopedFile file(SharedData.VertexFileName, "rb");
+			SharedData.FilePtr = &file;
 
 			if (!file)
 			{
+				SharedData.FilePtr = nullptr;
+
 				HAP::MessageError
 				(
 					"HAP: Could not open vertex file\n"
 				);
 			}
-
-			SharedData.FilePtr = &file;
 
 			auto ret = ThisHook.GetOriginal()
 			(
@@ -624,32 +625,34 @@ namespace
 			PathRenameExtensionA(SharedData.VertexFileName, ".hpverts");
 
 			ScopedFile vertfile(SharedData.VertexFileName, "wb");
+			SharedData.FilePtr = &vertfile;
 
 			if (!vertfile)
 			{
+				SharedData.FilePtr = nullptr;
+
 				HAP::MessageError
 				(
 					"HAP: Could not create vertex file\n"
 				);
 			}
 
-			SharedData.FilePtr = &vertfile;
-
 			char textfilename[1024];
 			strcpy_s(textfilename, filename);
 			PathRenameExtensionA(textfilename, ".hpvertstext");
 
 			ScopedFile textfile(textfilename, "wb");
+			SaveData.TextFilePtr = &textfile;
 
 			if (!textfile)
 			{
+				SaveData.TextFilePtr = nullptr;
+
 				HAP::MessageError
 				(
 					"HAP: Could not create vertex text file\n"
 				);
 			}
-
-			SaveData.TextFilePtr = &textfile;
 
 			auto ret = ThisHook.GetOriginal()
 			(
@@ -943,11 +946,14 @@ namespace
 					facecount
 				);
 
-				SaveData.TextFilePtr->WriteText
-				(
-					"solid id: %d\n",
-					id
-				);
+				if (SaveData.TextFilePtr)
+				{
+					SaveData.TextFilePtr->WriteText
+					(
+						"solid id: %d\n",
+						id
+					);
+				}
 			}
 
 			auto ret = ThisHook.GetOriginal()
@@ -1333,23 +1339,26 @@ namespace
 					pointscount
 				);
 
-				SaveData.TextFilePtr->WriteText
-				(
-					"\tface id: %d\n",
-					faceid
-				);
-
-				for (size_t i = 0; i < pointscount; i++)
+				if (SaveData.TextFilePtr)
 				{
-					auto vec = pointsaddr[i];
-
 					SaveData.TextFilePtr->WriteText
 					(
-						"\t\t[%g %g %g]\n",
-						vec.X,
-						vec.Y,
-						vec.Z
+						"\tface id: %d\n",
+						faceid
 					);
+
+					for (size_t i = 0; i < pointscount; i++)
+					{
+						auto vec = pointsaddr[i];
+
+						SaveData.TextFilePtr->WriteText
+						(
+							"\t\t[%g %g %g]\n",
+							vec.X,
+							vec.Y,
+							vec.Z
+						);
+					}
 				}
 			}
 
