@@ -205,7 +205,7 @@ namespace
 		}
 
 		template <typename... Types>
-		bool WriteSimple(const Types&... args)
+		bool WriteSimple(Types&&... args)
 		{
 			size_t adder[] =
 			{
