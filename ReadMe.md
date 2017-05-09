@@ -1,7 +1,5 @@
 # HammerPatch
 
-The program can be downloaded [here](https://github.com/crashfort/HammerPatch/releases). Visit [here](https://twitch.streamlabs.com/crashfort/) if you wish to support the development.
-
 ## Installing
 Both `HammerPatch.dll` and `HammerPatchLauncher.exe` should go in the same directory as `hammer.exe`. This will be in the `bin` directory of each Source 2013 game. Examples:
 
