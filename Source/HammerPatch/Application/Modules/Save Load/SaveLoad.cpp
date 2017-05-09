@@ -3,6 +3,13 @@
 
 namespace
 {
+	struct Vector3
+	{
+		float X;
+		float Y;
+		float Z;
+	};
+
 	namespace HammerFunctions
 	{
 		namespace Types
@@ -19,10 +26,20 @@ namespace
 				void* edx,
 				int count
 			);
+
+			using MapFaceCreateFace = void(__fastcall*)
+			(
+				void* thisptr,
+				void* edx,
+				Vector3* points,
+				int count,
+				bool iscordonface
+			);
 		}
 
 		Types::MapFaceCalcPlaneFromFacePoints MapFaceCalcPlaneFromFacePoints;
 		Types::MapFaceAllocatePoints MapFaceAllocatePoints;
+		Types::MapFaceCreateFace MapFaceCreateFace;
 
 		template <typename T>
 		void SetFromAddress(T& type, void* address)
@@ -97,6 +114,41 @@ namespace
 				(
 					"HAP: SaveLoadInit: "
 					"\"MapFaceAllocatePoints\" -> "
+					"hammer_dll.dll @ 0x%p\n",
+					address.Get()
+				);
+			}
+
+			/*
+				MapFaceCreateFace
+			*/
+			{
+				/*
+					0x10130490 static Hammer IDA address May 9 2017
+				*/
+				HAP::AddressFinder address
+				(
+					"hammer_dll.dll",
+					HAP::MemoryPattern
+					(
+						"\x55\x8B\xEC\x53\x56\x6A\x00\x8B\xD9\xE8\x00\x00"
+						"\x00\x00\x8B\x45\x0C\x83\xC4\x04\x8B\xCB\x85\xC0"
+						"\x7E\x2A\x50\xE8\x00\x00\x00\x00\x8B\x83\x00\x00"
+						"\x00\x00"
+					),
+					"xxxxxxxxxx????xxxxxxxxxxxxxx????xx????"
+				);
+
+				SetFromAddress
+				(
+					MapFaceCreateFace,
+					address.Get()
+				);
+
+				HAP::LogMessage
+				(
+					"HAP: SaveLoadInit: "
+					"\"MapFaceCreateFace\" -> "
 					"hammer_dll.dll @ 0x%p\n",
 					address.Get()
 				);
@@ -245,13 +297,6 @@ namespace
 		FILE* Handle = nullptr;
 	};
 
-	struct Vector3
-	{
-		float X;
-		float Y;
-		float Z;
-	};
-
 	struct MapFace
 	{
 		static Vector3* GetPointsPtr(void* thisptr)
@@ -294,6 +339,24 @@ namespace
 				thisptr,
 				nullptr,
 				count
+			);
+		}
+
+		static void CreateFace
+		(
+			void* thisptr,
+			Vector3* points,
+			int count,
+			bool iscordonface
+		)
+		{
+			HammerFunctions::MapFaceCreateFace
+			(
+				thisptr,
+				nullptr,
+				points,
+				count,
+				iscordonface
 			);
 		}
 
