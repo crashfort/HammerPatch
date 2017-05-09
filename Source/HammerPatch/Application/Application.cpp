@@ -22,7 +22,7 @@ namespace
 			void Write
 			(
 				const char* message,
-				WORD attributes
+				WORD attributes = 0
 			)
 			{
 				if (!IsValid())
@@ -201,8 +201,7 @@ void HAP::MessageNormal(const char* message)
 {
 	MainApplication.Console.Write
 	(
-		message,
-		0
+		message
 	);
 }
 
