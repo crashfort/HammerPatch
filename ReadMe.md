@@ -31,7 +31,7 @@ Here's the same shape but when saved and loaded with HammerPatch. It is the exac
 ![Shape 1 zoom HammerPatch](https://raw.githubusercontent.com/crashfort/HammerPatch/master/Images/Shape1_Zoom_HammerPatch.png)
 
 ### Figure 4
-This problem gets more problematic on advanced shapes. Here's one:
+This problem gets more problematic on advanced shapes.
 
 ![Shape 2](https://raw.githubusercontent.com/crashfort/HammerPatch/master/Images/Shape2.png)
 
