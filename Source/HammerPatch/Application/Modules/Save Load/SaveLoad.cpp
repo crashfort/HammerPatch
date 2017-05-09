@@ -10,6 +10,12 @@ namespace
 		float Z;
 	};
 
+	struct PlaneWinding
+	{
+		int Numpoints;
+		Vector3* Points;
+	};
+
 	namespace HammerFunctions
 	{
 		namespace Types
@@ -35,11 +41,17 @@ namespace
 				int count,
 				bool iscordonface
 			);
+
+			using SignalUpdate = void(__cdecl*)
+			(
+				int event
+			);
 		}
 
 		Types::MapFaceCalcPlaneFromFacePoints MapFaceCalcPlaneFromFacePoints;
 		Types::MapFaceAllocatePoints MapFaceAllocatePoints;
 		Types::MapFaceCreateFace MapFaceCreateFace;
+		Types::SignalUpdate SignalUpdate;
 
 		template <typename T>
 		void SetFromAddress(T& type, void* address)
@@ -149,6 +161,40 @@ namespace
 				(
 					"HAP: SaveLoadInit: "
 					"\"MapFaceCreateFace\" -> "
+					"hammer_dll.dll @ 0x%p\n",
+					address.Get()
+				);
+			}
+
+			/*
+				SignalUpdate
+			*/
+			{
+				/*
+					0x1006E4B0 static Hammer IDA address May 9 2017
+				*/
+				HAP::AddressFinder address
+				(
+					"hammer_dll.dll",
+					HAP::MemoryPattern
+					(
+						"\x55\x8B\xEC\x56\x8B\x75\x08\xFF\x15\x00\x00\x00"
+						"\x00\xFF\x04\xB5\x00\x00\x00\x00\xD9\x1C\xB5\x00"
+						"\x00\x00\x00\x5E\x5D\xC3"
+					),
+					"xxxxxxxxx????xxx????xxx????xxx"
+				);
+
+				SetFromAddress
+				(
+					SignalUpdate,
+					address.Get()
+				);
+
+				HAP::LogMessage
+				(
+					"HAP: SaveLoadInit: "
+					"\"SignalUpdate\" -> "
 					"hammer_dll.dll @ 0x%p\n",
 					address.Get()
 				);
@@ -337,6 +383,14 @@ namespace
 			HAP::StructureWalker walker(thisptr);
 			auto ret = *(int*)walker.Advance(412);
 			
+			return ret;
+		}
+
+		static bool IsDisplacement(void* thisptr)
+		{
+			HAP::StructureWalker walker(thisptr);
+			auto ret = *(unsigned short*)walker.Advance(420);
+
 			return ret;
 		}
 
@@ -593,6 +647,8 @@ namespace
 
 	namespace Module_MapSolidLoad
 	{
+		#pragma region Init
+
 		/*
 			0x10148C10 static Hammer IDA address May 8 2017
 		*/
@@ -623,6 +679,8 @@ namespace
 			"hammer_dll.dll", "MapSolidLoad", Override, Pattern, Mask
 		};
 
+		#pragma endregion
+
 		int __fastcall Override
 		(
 			void* thisptr,
@@ -631,6 +689,46 @@ namespace
 			bool& valid
 		)
 		{
+			if (SharedData.FilePtr)
+			{
+				LoadData.Solids.emplace_back();
+				LoadData.CurrentSolid = &LoadData.Solids.back();
+
+				int facecount;
+
+				SharedData.FilePtr->ReadSimple
+				(
+					LoadData.CurrentSolid->ID,
+					facecount
+				);
+
+				LoadData.CurrentSolid->Faces.resize(facecount);
+
+				for (auto& face : LoadData.CurrentSolid->Faces)
+				{
+					MapFace entry;
+					int pointscount;
+
+					SharedData.FilePtr->ReadSimple
+					(
+						entry.ID,
+						pointscount
+					);
+
+					entry.Points.resize(pointscount);
+
+					SharedData.FilePtr->ReadRegion
+					(
+						entry.Points,
+						pointscount
+					);
+
+					entry.ParentSolidID = LoadData.CurrentSolid->ID;
+
+					face = std::move(entry);
+				}
+			}
+
 			auto ret = ThisHook.GetOriginal()
 			(
 				thisptr,
@@ -638,6 +736,8 @@ namespace
 				file,
 				valid
 			);
+
+			LoadData.CurrentSolid = nullptr;
 
 			return ret;
 		}
@@ -691,53 +791,11 @@ namespace
 			void* mapworld
 		)
 		{
-			if (SharedData.FilePtr)
-			{
-				LoadData.Solids.emplace_back();
-				LoadData.CurrentSolid = &LoadData.Solids.back();
-
-				int facecount;
-
-				SharedData.FilePtr->ReadSimple
-				(
-					LoadData.CurrentSolid->ID,
-					facecount
-				);
-
-				LoadData.CurrentSolid->Faces.resize(facecount);
-
-				for (auto& face : LoadData.CurrentSolid->Faces)
-				{
-					MapFace entry;
-					int pointscount;
-
-					SharedData.FilePtr->ReadSimple
-					(
-						entry.ID,
-						pointscount
-					);
-
-					entry.Points.resize(pointscount);
-
-					SharedData.FilePtr->ReadRegion
-					(
-						entry.Points,
-						pointscount
-					);
-
-					entry.ParentSolidID = LoadData.CurrentSolid->ID;
-
-					face = std::move(entry);
-				}
-			}
-
 			auto ret = ThisHook.GetOriginal()
 			(
 				file,
 				mapworld
 			);
-
-			LoadData.CurrentSolid = nullptr;
 
 			return ret;
 		}
@@ -1016,6 +1074,89 @@ namespace
 		}
 	}
 	#endif
+
+	namespace Module_MapFaceCreateFaceFromWinding
+	{
+		#pragma region Init
+
+		/*
+			0x101302A0 static Hammer IDA address May 9 2017
+		*/
+		auto Pattern = HAP::MemoryPattern
+		(
+			"\x55\x8B\xEC\x51\x53\x56\x57\x8B\xF1\x6A\x00\x89"
+			"\x75\xFC\xE8\x00\x00\x00\x00\x8B\x7D\x08\x83\xC4"
+			"\x04\x8B\xCE\xFF\x37\xE8\x00\x00\x00\x00\x33\xDB"
+		);
+
+		auto Mask =
+		(
+			"xxxxxxxxxxxxxxx????xxxxxxxxxxx????xx"
+		);
+
+		void __fastcall Override
+		(
+			void* thisptr,
+			void* edx,
+			PlaneWinding* winding,
+			int flags
+		);
+
+		using ThisFunction = decltype(Override)*;
+
+		HAP::HookModuleMask<ThisFunction> ThisHook
+		{
+			"hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, Pattern, Mask
+		};
+
+		#pragma endregion
+
+		void __fastcall Override
+		(
+			void* thisptr,
+			void* edx,
+			PlaneWinding* winding,
+			int flags
+		)
+		{
+			if (SharedData.IsLoading)
+			{
+				auto id = MapFace::GetFaceID(thisptr);
+
+				MapFace* sourceface = nullptr;
+
+				for (auto& solid : LoadData.Solids)
+				{
+					for (auto& face : solid.Faces)
+					{
+						if (face.ID == id)
+						{
+							sourceface = &face;
+							break;
+						}
+					}
+
+					if (sourceface)
+					{
+						break;
+					}
+				}
+
+				for (size_t i = 0; i < winding->Numpoints; i++)
+				{
+					winding->Points[i] = sourceface->Points[i];
+				}
+			}
+
+			ThisHook.GetOriginal()
+			(
+				thisptr,
+				edx,
+				winding,
+				flags
+			);
+		}
+	}
 
 	namespace Module_MapFaceLoadKeyCallback
 	{
