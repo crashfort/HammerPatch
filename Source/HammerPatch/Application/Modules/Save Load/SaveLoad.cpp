@@ -558,6 +558,21 @@ namespace
 				unk
 			);
 
+			if (SharedData.VertFilePtr)
+			{
+				char actualname[1024];
+				strcpy_s(actualname, filename);
+
+				PathStripPathA(actualname);
+				PathRemoveExtensionA(actualname);
+
+				HAP::MessageNormal
+				(
+					"HAP: Loaded map \"%s\"\n",
+					actualname
+				);
+			}
+
 			SharedData.VertFilePtr = nullptr;
 			SharedData.IsLoading = false;
 
