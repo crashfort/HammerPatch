@@ -200,6 +200,8 @@ namespace
 
 		bool Assign(const char* path, const char* mode)
 		{
+			Close();
+
 			Handle = fopen(path, mode);
 			return Handle != nullptr;
 		}
