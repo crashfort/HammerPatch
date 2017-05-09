@@ -1195,6 +1195,8 @@ namespace
 				{
 					winding->Points[i] = sourceface->Points[i];
 				}
+
+				flags = 0;
 			}
 
 			ThisHook.GetOriginal()
@@ -1202,7 +1204,7 @@ namespace
 				thisptr,
 				edx,
 				winding,
-				0
+				flags
 			);
 		}
 	}
