@@ -631,7 +631,7 @@ namespace
 
 			char textfilename[1024];
 			strcpy_s(textfilename, filename);
-			PathRenameExtensionA(textfilename, ".txt");
+			PathRenameExtensionA(textfilename, ".hpvertstext");
 
 			ScopedFile textfile(textfilename, "wb");
 
