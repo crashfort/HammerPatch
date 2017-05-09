@@ -135,7 +135,12 @@ void HAP::Setup()
 			console.DefaultAttributes = coninfo.wAttributes;
 
 			SetConsoleTitleA("HammerPatch Console");
-			ShowWindow(GetConsoleWindow(), SW_SHOWMINNOACTIVE);
+			
+			ShowWindow
+			(
+				GetConsoleWindow(),
+				SW_SHOWMINNOACTIVE
+			);
 		}
 	}
 
@@ -220,6 +225,12 @@ void HAP::MessageError(const char* message)
 	(
 		message,
 		FOREGROUND_RED
+	);
+
+	ShowWindow
+	(
+		GetConsoleWindow(),
+		SW_SHOW
 	);
 }
 
