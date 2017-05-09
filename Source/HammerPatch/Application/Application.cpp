@@ -13,6 +13,50 @@ namespace
 		{
 			HANDLE StdOutHandle = INVALID_HANDLE_VALUE;
 			WORD DefaultAttributes;
+
+			bool IsValid() const
+			{
+				return StdOutHandle != INVALID_HANDLE_VALUE;
+			}
+
+			void Write
+			(
+				const char* message,
+				WORD attributes
+			)
+			{
+				if (!IsValid())
+				{
+					return;
+				}
+
+				if (attributes > 0)
+				{
+					SetConsoleTextAttribute
+					(
+						StdOutHandle,
+						attributes
+					);
+				}
+
+				WriteConsoleA
+				(
+					StdOutHandle,
+					message,
+					strlen(message),
+					nullptr,
+					nullptr
+				);
+
+				if (attributes > 0)
+				{
+					SetConsoleTextAttribute
+					(
+						StdOutHandle,
+						DefaultAttributes
+					);
+				}
+			}
 		} Console;
 	};
 
@@ -78,10 +122,20 @@ void HAP::Setup()
 
 		console.StdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-		if (console.StdOutHandle != INVALID_HANDLE_VALUE)
+		if (console.IsValid())
 		{
+			CONSOLE_SCREEN_BUFFER_INFO coninfo;
+			
+			GetConsoleScreenBufferInfo
+			(
+				console.StdOutHandle,
+				&coninfo
+			);
+
+			console.DefaultAttributes = coninfo.wAttributes;
+
 			SetConsoleTitleA("HammerPatch Console");
-			ShowWindow(GetConsoleWindow(), SW_MINIMIZE);
+			ShowWindow(GetConsoleWindow(), SW_SHOWMINNOACTIVE);
 		}
 	}
 
@@ -89,11 +143,11 @@ void HAP::Setup()
 
 	if (res != MH_OK)
 	{
-		LogMessage("HAP: Failed to initialize hooks\n");
+		MessageError("HAP: Failed to initialize hooks\n");
 		throw res;
 	}
 
-	LogMessage
+	MessageNormal
 	(
 		"HAP: Creating %d modules\n",
 		MainApplication.Modules.size()
@@ -106,7 +160,7 @@ void HAP::Setup()
 
 		if (res != MH_OK)
 		{
-			LogMessage
+			MessageError
 			(
 				"HAP: Could not enable module \"%s\": \"%s\"\n",
 				name,
@@ -121,7 +175,7 @@ void HAP::Setup()
 
 		MH_EnableHook(function);
 
-		LogMessage
+		MessageNormal
 		(
 			"HAP: Enabled module \"%s\" -> %s @ 0x%p\n",
 			name,
@@ -143,22 +197,30 @@ void HAP::Close()
 	MH_Uninitialize();
 }
 
-void HAP::LogMessageText(const char* message)
+void HAP::MessageNormal(const char* message)
 {
-	auto& console = MainApplication.Console;
-
-	if (console.StdOutHandle == INVALID_HANDLE_VALUE)
-	{
-		return;
-	}
-
-	WriteConsoleA
+	MainApplication.Console.Write
 	(
-		console.StdOutHandle,
 		message,
-		strlen(message),
-		nullptr,
-		nullptr
+		0
+	);
+}
+
+void HAP::MessageWarning(const char* message)
+{
+	MainApplication.Console.Write
+	(
+		message,
+		FOREGROUND_RED | FOREGROUND_GREEN
+	);
+}
+
+void HAP::MessageError(const char* message)
+{
+	MainApplication.Console.Write
+	(
+		message,
+		FOREGROUND_RED
 	);
 }
 
@@ -174,7 +236,7 @@ void HAP::AddStartupFunction(const StartupFuncData& data)
 
 void HAP::CallStartupFunctions()
 {
-	LogMessage
+	MessageNormal
 	(
 		"HAP: Calling %d startup procedures\n",
 		MainApplication.StartupFunctions.size()
@@ -189,7 +251,7 @@ void HAP::CallStartupFunctions()
 			throw entry.Name;
 		}
 
-		LogMessage
+		MessageNormal
 		(
 			"HAP: Startup procedure \"%s\" passed\n",
 			entry.Name

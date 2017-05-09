@@ -29,7 +29,11 @@ namespace
 
 		catch (const char* name)
 		{
-			HAP::LogMessage("HAP: Startup procedure \"%s\" failed\n", name);
+			HAP::MessageError
+			(
+				"HAP: Startup procedure \"%s\" failed\n",
+				name
+			);
 
 			ShowWindow
 			(
@@ -40,7 +44,10 @@ namespace
 			return 1;
 		}
 
-		HAP::LogMessageText("HAP: HammerPatch loaded\n");
+		HAP::MessageNormal
+		(
+			"HAP: HammerPatch loaded\n"
+		);
 
 		return 1;
 	}

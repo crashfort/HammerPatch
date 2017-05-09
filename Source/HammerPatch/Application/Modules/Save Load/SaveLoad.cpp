@@ -87,7 +87,7 @@ namespace
 					address.Get()
 				);
 
-				HAP::LogMessage
+				HAP::MessageNormal
 				(
 					"HAP: SaveLoadInit: "
 					"\"MapFaceCalcPlaneFromFacePoints\" -> "
@@ -122,7 +122,7 @@ namespace
 					address.Get()
 				);
 
-				HAP::LogMessage
+				HAP::MessageNormal
 				(
 					"HAP: SaveLoadInit: "
 					"\"MapFaceAllocatePoints\" -> "
@@ -157,7 +157,7 @@ namespace
 					address.Get()
 				);
 
-				HAP::LogMessage
+				HAP::MessageNormal
 				(
 					"HAP: SaveLoadInit: "
 					"\"MapFaceCreateFace\" -> "
@@ -191,7 +191,7 @@ namespace
 					address.Get()
 				);
 
-				HAP::LogMessage
+				HAP::MessageNormal
 				(
 					"HAP: SaveLoadInit: "
 					"\"SignalUpdate\" -> "
@@ -541,7 +541,10 @@ namespace
 
 			if (!file)
 			{
-				HAP::LogMessageText("HAP: Could not open vertex file\n");
+				HAP::MessageError
+				(
+					"HAP: Could not open vertex file\n"
+				);
 			}
 
 			SharedData.FilePtr = &file;
@@ -624,7 +627,10 @@ namespace
 
 			if (!vertfile)
 			{
-				HAP::LogMessageText("HAP: Could not create vertex file\n");
+				HAP::MessageError
+				(
+					"HAP: Could not create vertex file\n"
+				);
 			}
 
 			SharedData.FilePtr = &vertfile;
@@ -637,7 +643,10 @@ namespace
 
 			if (!textfile)
 			{
-				HAP::LogMessageText("HAP: Could not create vertex text file\n");
+				HAP::MessageError
+				(
+					"HAP: Could not create vertex text file\n"
+				);
 			}
 
 			SaveData.TextFilePtr = &textfile;

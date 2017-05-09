@@ -5,21 +5,77 @@ namespace HAP
 	void Setup();
 	void Close();
 
-	void LogMessageText(const char* message);
+	using MessageFuncType = void(*)(const char*);
 
 	template <typename... Args>
-	void LogMessage(const char* format, Args&&... args)
+	void Message
+	(
+		MessageFuncType function,
+		const char* format,
+		Args&&... args
+	)
 	{
 		if (sizeof...(args) == 0)
 		{
-			LogMessageText(format);
+			function(format);
 			return;
 		}
 
 		char buf[1024];
 		sprintf_s(buf, format, std::forward<Args>(args)...);
 
-		LogMessageText(buf);
+		function(buf);
+	}
+
+	void MessageNormal(const char* message);
+
+	template <typename... Args>
+	void MessageNormal
+	(
+		const char* format,
+		Args&&... args
+	)
+	{
+		Message
+		(
+			MessageNormal,
+			format,
+			std::forward<Args>(args)...
+		);
+	}
+
+	void MessageWarning(const char* message);
+
+	template <typename... Args>
+	void MessageWarning
+	(
+		const char* format,
+		Args&&... args
+	)
+	{
+		Message
+		(
+			MessageWarning,
+			format,
+			std::forward<Args>(args)...
+		);
+	}
+
+	void MessageError(const char* message);
+
+	template <typename... Args>
+	void MessageError
+	(
+		const char* format,
+		Args&&... args
+	)
+	{
+		Message
+		(
+			MessageError,
+			format,
+			std::forward<Args>(args)...
+		);
 	}
 
 	using ShutdownFuncType = void(*)();
