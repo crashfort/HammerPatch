@@ -3,7 +3,7 @@
 ## Vertices moving on load
 In default Hammer, unless your geometry is of perfectly straight angles, the vertices will move every time you open the map. This is because the vertices' positions are recalculated every time from plane points. This is a lossy process and will only get worse every time the map is loaded.
 
-In HammerPatch, all vertices are saved separately and is restored on load to overwrite Hammer's estimation. Here are some images that illustrate this problem.
+In HammerPatch, all vertices are saved separately and are restored on load to overwrite Hammer's estimations. Here are some images that illustrate this problem.
 
 ### Figure 1
 Say you have a simple default primitive. This is a cylinder with 32 sides.
