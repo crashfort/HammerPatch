@@ -515,7 +515,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapDocLoad", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapDocLoad",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -594,7 +598,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapDocSave", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapDocSave",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -676,7 +684,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapSolidLoad", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapSolidLoad",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -780,7 +792,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapWorldLoadSolidCallback", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapWorldLoadSolidCallback",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -830,7 +846,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapSolidLoadSideCallback", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapSolidLoadSideCallback",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -881,7 +901,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapSolidSave", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapSolidSave",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -958,7 +982,10 @@ namespace
 
 		HAP::HookModuleStaticAddress<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "Scanf", Override, Address.Get()
+			"hammer_dll.dll",
+			"Scanf",
+			Override,
+			Address.Get()
 		};
 
 		#pragma endregion
@@ -1044,7 +1071,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "Sprintf", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"Sprintf",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -1106,7 +1137,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapFaceCreateFaceFromWinding",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -1188,7 +1223,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapFaceLoadKeyCallback", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapFaceLoadKeyCallback",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
@@ -1242,7 +1281,11 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook
 		{
-			"hammer_dll.dll", "MapFaceSave", Override, Pattern, Mask
+			"hammer_dll.dll",
+			"MapFaceSave",
+			Override,
+			Pattern,
+			Mask
 		};
 
 		#pragma endregion
