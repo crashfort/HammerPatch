@@ -250,6 +250,21 @@ namespace
 			);
 		}
 
+		template <typename... Args>
+		int WriteText
+		(
+			const char* format,
+			Args&&... args
+		)
+		{
+			return fprintf_s
+			(
+				Get(),
+				format,
+				std::forward<Args>(args)...
+			);
+		}
+
 		template <typename... Types>
 		bool ReadSimple(Types&... args)
 		{
@@ -402,7 +417,7 @@ namespace
 
 	struct
 	{
-		
+		ScopedFile* TextFilePtr;
 	} SaveData;
 
 	struct
@@ -543,14 +558,22 @@ namespace
 			strcpy_s(SharedData.VertexFileName, filename);
 			PathRenameExtensionA(SharedData.VertexFileName, ".hpverts");
 
-			ScopedFile file(SharedData.VertexFileName, "wb");
+			ScopedFile vertfile(SharedData.VertexFileName, "wb");
 
-			if (!file)
+			if (!vertfile)
 			{
 				HAP::LogMessageText("HAP: Could not create vertex file\n");
 			}
 
-			SharedData.FilePtr = &file;
+			SharedData.FilePtr = &vertfile;
+
+			char textfilename[1024];
+			strcpy_s(textfilename, filename);
+			PathRenameExtensionA(textfilename, ".txt");
+
+			ScopedFile textfile(textfilename, "wb");
+
+			SaveData.TextFilePtr = &textfile;
 
 			auto ret = ThisHook.GetOriginal()
 			(
@@ -560,6 +583,7 @@ namespace
 				saveflags
 			);
 
+			SaveData.TextFilePtr = nullptr;
 			SharedData.FilePtr = nullptr;
 			SharedData.IsSaving = false;
 
@@ -821,6 +845,12 @@ namespace
 				(
 					id,
 					facecount
+				);
+
+				SaveData.TextFilePtr->WriteText
+				(
+					"solid id: %d\n",
+					id
 				);
 			}
 
@@ -1102,6 +1132,25 @@ namespace
 					sizeof(Vector3),
 					pointscount
 				);
+
+				SaveData.TextFilePtr->WriteText
+				(
+					"\tface id: %d\n",
+					faceid
+				);
+
+				for (size_t i = 0; i < pointscount; i++)
+				{
+					auto vec = pointsaddr[i];
+
+					SaveData.TextFilePtr->WriteText
+					(
+						"\t\t[%g %g %g]\n",
+						vec.X,
+						vec.Y,
+						vec.Z
+					);
+				}
 			}
 
 			auto ret = ThisHook.GetOriginal()
