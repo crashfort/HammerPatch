@@ -635,6 +635,11 @@ namespace
 
 			ScopedFile textfile(textfilename, "wb");
 
+			if (!textfile)
+			{
+				HAP::LogMessageText("HAP: Could not create vertex text file\n");
+			}
+
 			SaveData.TextFilePtr = &textfile;
 
 			auto ret = ThisHook.GetOriginal()
