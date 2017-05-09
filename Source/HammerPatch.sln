@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Launcher", "Launcher\Launcher.vcxproj", "{C6F65CB5-BBC7-45F8-90A5-696D65FEACA5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HammerPatchLauncher", "HammerPatchLauncher\HammerPatchLauncher.vcxproj", "{C6F65CB5-BBC7-45F8-90A5-696D65FEACA5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HammerPatch", "HammerPatch\HammerPatch.vcxproj", "{2987B639-4D43-45AE-9127-3B68DA044C8D}"
 EndProject

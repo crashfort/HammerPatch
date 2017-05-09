@@ -12,7 +12,7 @@
 
 # Build results
 Source/HammerPatch/Intermediate/
-Source/Launcher/Intermediate/
+Source/HammerPatchLauncher/Intermediate/
 x64/
 x86/
 bld/
