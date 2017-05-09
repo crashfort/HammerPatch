@@ -463,7 +463,7 @@ namespace
 	{
 		char VertexFileName[1024];
 
-		ScopedFile* FilePtr;
+		ScopedFile* VertFilePtr;
 
 		bool IsLoading = false;
 		bool IsSaving = false;
@@ -538,11 +538,11 @@ namespace
 			PathRenameExtensionA(SharedData.VertexFileName, ".hpverts");
 
 			ScopedFile file(SharedData.VertexFileName, "rb");
-			SharedData.FilePtr = &file;
+			SharedData.VertFilePtr = &file;
 
 			if (!file)
 			{
-				SharedData.FilePtr = nullptr;
+				SharedData.VertFilePtr = nullptr;
 
 				HAP::MessageError
 				(
@@ -558,7 +558,7 @@ namespace
 				unk
 			);
 
-			SharedData.FilePtr = nullptr;
+			SharedData.VertFilePtr = nullptr;
 			SharedData.IsLoading = false;
 
 			return ret;
@@ -625,11 +625,11 @@ namespace
 			PathRenameExtensionA(SharedData.VertexFileName, ".hpverts");
 
 			ScopedFile vertfile(SharedData.VertexFileName, "wb");
-			SharedData.FilePtr = &vertfile;
+			SharedData.VertFilePtr = &vertfile;
 
 			if (!vertfile)
 			{
-				SharedData.FilePtr = nullptr;
+				SharedData.VertFilePtr = nullptr;
 
 				HAP::MessageError
 				(
@@ -663,7 +663,7 @@ namespace
 			);
 
 			SaveData.TextFilePtr = nullptr;
-			SharedData.FilePtr = nullptr;
+			SharedData.VertFilePtr = nullptr;
 			SharedData.IsSaving = false;
 
 			return ret;
@@ -718,14 +718,14 @@ namespace
 			bool& valid
 		)
 		{
-			if (SharedData.FilePtr)
+			if (SharedData.VertFilePtr)
 			{
 				LoadData.Solids.emplace_back();
 				LoadData.CurrentSolid = &LoadData.Solids.back();
 
 				int facecount;
 
-				SharedData.FilePtr->ReadSimple
+				SharedData.VertFilePtr->ReadSimple
 				(
 					LoadData.CurrentSolid->ID,
 					facecount
@@ -738,7 +738,7 @@ namespace
 					MapFace entry;
 					int pointscount;
 
-					SharedData.FilePtr->ReadSimple
+					SharedData.VertFilePtr->ReadSimple
 					(
 						entry.ID,
 						pointscount
@@ -746,7 +746,7 @@ namespace
 
 					entry.Points.resize(pointscount);
 
-					SharedData.FilePtr->ReadRegion
+					SharedData.VertFilePtr->ReadRegion
 					(
 						entry.Points,
 						pointscount
@@ -935,12 +935,12 @@ namespace
 			void* saveinfo
 		)
 		{
-			if (SharedData.FilePtr)
+			if (SharedData.VertFilePtr)
 			{
 				auto id = MapSolid::GetID(thisptr);
 				auto facecount = MapSolid::GetFaceCount(thisptr);
 
-				SharedData.FilePtr->WriteSimple
+				SharedData.VertFilePtr->WriteSimple
 				(
 					id,
 					facecount
@@ -1320,19 +1320,19 @@ namespace
 			void* saveinfo
 		)
 		{
-			if (SharedData.FilePtr)
+			if (SharedData.VertFilePtr)
 			{				
 				auto pointsaddr = MapFace::GetPointsPtr(thisptr);
 				auto pointscount = MapFace::GetPointCount(thisptr);
 				auto faceid = MapFace::GetFaceID(thisptr);
 
-				SharedData.FilePtr->WriteSimple
+				SharedData.VertFilePtr->WriteSimple
 				(
 					faceid,
 					pointscount
 				);
 
-				SharedData.FilePtr->WriteRegion
+				SharedData.VertFilePtr->WriteRegion
 				(
 					pointsaddr,
 					sizeof(Vector3),
