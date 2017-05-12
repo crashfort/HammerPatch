@@ -482,8 +482,51 @@ namespace
 
 	struct
 	{
+		void LoadVertexFile(ScopedFile* fileptr)
+		{
+			Solids.clear();
+
+			int solidcount;
+			fileptr->ReadSimple(solidcount);
+
+			Solids.resize(solidcount);
+
+			for (auto& cursolid : Solids)
+			{
+				int facecount;
+
+				SharedData.VertFilePtr->ReadSimple
+				(
+					cursolid.ID,
+					facecount
+				);
+
+				cursolid.Faces.resize(facecount);
+
+				for (auto& curface : cursolid.Faces)
+				{
+					int pointscount;
+
+					SharedData.VertFilePtr->ReadSimple
+					(
+						curface.ID,
+						pointscount
+					);
+
+					curface.Points.resize(pointscount);
+
+					SharedData.VertFilePtr->ReadRegion
+					(
+						curface.Points,
+						pointscount
+					);
+
+					curface.ParentSolidID = cursolid.ID;
+				}
+			}
+		}
+
 		std::vector<MapSolid> Solids;
-		MapSolid* CurrentSolid = nullptr;
 	} LoadData;
 }
 
@@ -555,6 +598,8 @@ namespace
 					"HAP: Could not open vertex file\n"
 				);
 			}
+
+			LoadData.LoadVertexFile(SharedData.VertFilePtr);
 
 			auto ret = ThisHook.GetOriginal()
 			(
@@ -748,46 +793,6 @@ namespace
 			bool& valid
 		)
 		{
-			if (SharedData.VertFilePtr)
-			{
-				LoadData.Solids.emplace_back();
-				LoadData.CurrentSolid = &LoadData.Solids.back();
-
-				int facecount;
-
-				SharedData.VertFilePtr->ReadSimple
-				(
-					LoadData.CurrentSolid->ID,
-					facecount
-				);
-
-				LoadData.CurrentSolid->Faces.resize(facecount);
-
-				for (auto& face : LoadData.CurrentSolid->Faces)
-				{
-					MapFace entry;
-					int pointscount;
-
-					SharedData.VertFilePtr->ReadSimple
-					(
-						entry.ID,
-						pointscount
-					);
-
-					entry.Points.resize(pointscount);
-
-					SharedData.VertFilePtr->ReadRegion
-					(
-						entry.Points,
-						pointscount
-					);
-
-					entry.ParentSolidID = LoadData.CurrentSolid->ID;
-
-					face = std::move(entry);
-				}
-			}
-
 			auto ret = ThisHook.GetOriginal()
 			(
 				thisptr,
@@ -795,8 +800,6 @@ namespace
 				file,
 				valid
 			);
-
-			LoadData.CurrentSolid = nullptr;
 
 			return ret;
 		}
