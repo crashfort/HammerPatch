@@ -464,8 +464,19 @@ namespace
 		std::vector<MapFace> Faces;
 	};
 
-	struct
+	struct VertexSharedData
 	{
+		struct
+		{
+			/*
+				This must always be the first 4 bytes.
+				Anything after can vary per version.
+			*/
+			int32_t FileVersion;
+
+			int NumberOfSolids;
+		} FileHeader;
+
 		char VertexFileName[1024];
 
 		ScopedFile* VertFilePtr;
@@ -474,22 +485,25 @@ namespace
 		bool IsSaving = false;
 	} SharedData;
 
-	struct
+	struct VertexSaveData
 	{
+		enum
+		{
+			Version = 1
+		};
+
 		ScopedFile* TextFilePtr;
-		int NumberOfSolids = 0;
 	} SaveData;
 
-	struct
+	struct VertexLoadData
 	{
 		void LoadVertexFile(ScopedFile* fileptr)
 		{
 			Solids.clear();
 
-			int solidcount;
-			fileptr->ReadSimple(solidcount);
+			fileptr->ReadSimple(SharedData.FileHeader);
 
-			Solids.resize(solidcount);
+			Solids.resize(SharedData.FileHeader.NumberOfSolids);
 
 			for (auto& cursolid : Solids)
 			{
@@ -719,12 +733,6 @@ namespace
 				);
 			}
 
-			/*
-				Number of solids, this gets written to further down.
-			*/
-			SaveData.NumberOfSolids = 0;
-			vertfile.WriteSimple(SaveData.NumberOfSolids);
-
 			char textfilename[1024];
 			strcpy_s(textfilename, filename);
 			PathRenameExtensionA(textfilename, ".hpvertstext");
@@ -742,6 +750,14 @@ namespace
 				);
 			}
 
+			/*
+				Reset the solid counter, the header gets rewritten later.
+			*/
+			SharedData.FileHeader = {};
+			SharedData.FileHeader.FileVersion = VertexSaveData::Version;
+
+			vertfile.WriteSimple(SharedData.FileHeader);
+
 			auto ret = ThisHook.GetOriginal()
 			(
 				thisptr,
@@ -751,7 +767,7 @@ namespace
 			);
 
 			vertfile.SeekAbsolute(0);
-			vertfile.WriteSimple(SaveData.NumberOfSolids);
+			vertfile.WriteSimple(SharedData.FileHeader);
 
 			SaveData.TextFilePtr = nullptr;
 			SharedData.VertFilePtr = nullptr;
@@ -986,7 +1002,7 @@ namespace
 		{
 			if (SharedData.VertFilePtr)
 			{
-				SaveData.NumberOfSolids++;
+				SharedData.FileHeader.NumberOfSolids++;
 
 				auto id = MapSolid::GetID(thisptr);
 				auto facecount = MapSolid::GetFaceCount(thisptr);
