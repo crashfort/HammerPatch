@@ -197,7 +197,7 @@ namespace
 		Microsoft::WRL::Wrappers::HandleTraits::HANDLENullTraits
 	>;
 
-	void Inject(HANDLE process, HANDLE thread)
+	void Inject(HANDLE process)
 	{
 		wchar_t dllname[] = L"HammerPatch.dll";
 
@@ -295,7 +295,7 @@ void wmain(int argc, wchar_t* argv[])
 			}
 		}
 
-		Inject(info.hProcess, info.hThread);
+		Inject(info.hProcess);
 	}
 
 	catch (HRESULT code)
