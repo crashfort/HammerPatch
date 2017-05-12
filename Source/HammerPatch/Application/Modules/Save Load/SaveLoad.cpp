@@ -357,6 +357,11 @@ namespace
 			);
 		}
 
+		void SeekAbsolute(size_t pos)
+		{
+			fseek(Get(), pos, SEEK_SET);
+		}
+
 		FILE* Handle = nullptr;
 	};
 
@@ -472,6 +477,7 @@ namespace
 	struct
 	{
 		ScopedFile* TextFilePtr;
+		int NumberOfSolids = 0;
 	} SaveData;
 
 	struct
@@ -652,6 +658,11 @@ namespace
 				);
 			}
 
+			/*
+				Number of solids, this gets written to further down.
+			*/
+			vertfile.WriteSimple(0);
+
 			char textfilename[1024];
 			strcpy_s(textfilename, filename);
 			PathRenameExtensionA(textfilename, ".hpvertstext");
@@ -676,6 +687,9 @@ namespace
 				filename,
 				saveflags
 			);
+
+			vertfile.SeekAbsolute(0);
+			vertfile.WriteSimple(SaveData.NumberOfSolids);
 
 			SaveData.TextFilePtr = nullptr;
 			SharedData.VertFilePtr = nullptr;
@@ -952,6 +966,8 @@ namespace
 		{
 			if (SharedData.VertFilePtr)
 			{
+				SaveData.NumberOfSolids++;
+
 				auto id = MapSolid::GetID(thisptr);
 				auto facecount = MapSolid::GetFaceCount(thisptr);
 
