@@ -14,7 +14,7 @@ namespace
 	{
 		try
 		{
-			HAP::Setup();
+			HAP::CreateModules();
 		}
 
 		catch (MH_STATUS status)

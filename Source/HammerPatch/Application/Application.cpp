@@ -113,37 +113,38 @@ namespace
 	}
 }
 
-void HAP::Setup()
+void HAP::CreateConsole()
 {
+	AllocConsole();
+
+	auto& console = MainApplication.Console;
+
+	console.StdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	if (console.IsValid())
 	{
-		AllocConsole();
+		CONSOLE_SCREEN_BUFFER_INFO coninfo;
 
-		auto& console = MainApplication.Console;
+		GetConsoleScreenBufferInfo
+		(
+			console.StdOutHandle,
+			&coninfo
+		);
 
-		console.StdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+		console.DefaultAttributes = coninfo.wAttributes;
 
-		if (console.IsValid())
-		{
-			CONSOLE_SCREEN_BUFFER_INFO coninfo;
-			
-			GetConsoleScreenBufferInfo
-			(
-				console.StdOutHandle,
-				&coninfo
-			);
+		SetConsoleTitleA("HammerPatch Console");
 
-			console.DefaultAttributes = coninfo.wAttributes;
-
-			SetConsoleTitleA("HammerPatch Console");
-			
-			ShowWindow
-			(
-				GetConsoleWindow(),
-				SW_SHOWMINNOACTIVE
-			);
-		}
+		ShowWindow
+		(
+			GetConsoleWindow(),
+			SW_SHOWMINNOACTIVE
+		);
 	}
+}
 
+void HAP::CreateModules()
+{
 	auto res = MH_Initialize();
 
 	if (res != MH_OK)

@@ -2,7 +2,8 @@
 
 namespace HAP
 {
-	void Setup();
+	void CreateConsole();
+	void CreateModules();
 	void Close();
 
 	using MessageFuncType = void(*)(const char*);
