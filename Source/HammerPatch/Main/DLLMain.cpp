@@ -5,13 +5,24 @@
 
 namespace
 {
-
+	enum
+	{
+		ApplicationVersion = 1
+	};
 }
 
 namespace
 {
 	unsigned int __stdcall MainThread(void* args)
 	{
+		HAP::CreateConsole();
+
+		HAP::MessageNormal
+		(
+			"HAP: Current version: %d\n",
+			ApplicationVersion
+		);
+
 		try
 		{
 			HAP::CreateModules();
