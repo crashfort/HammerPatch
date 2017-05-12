@@ -272,7 +272,7 @@ void wmain(int argc, wchar_t* argv[])
 			Zzz. Wait for Hammer to load up I guess.
 			Why doesn't suspended start work again?
 		*/
-		std::this_thread::sleep_for(1s);
+		std::this_thread::sleep_for(3s);
 
 		{
 			DWORD exitcode;
