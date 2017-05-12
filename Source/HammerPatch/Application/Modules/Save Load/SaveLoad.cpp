@@ -501,6 +501,18 @@ namespace
 		{
 			Solids.clear();
 
+			int32_t fileversion;
+			fileptr->ReadSimple(fileversion);
+
+			HAP::MessageNormal
+			(
+				"HAP: Master vertex version: %d\n"
+				"HAP: Map vertex version: %d\n",
+				VertexSaveData::Version,
+				fileversion
+			);
+
+			fileptr->SeekAbsolute(0);
 			fileptr->ReadSimple(SharedData.FileHeader);
 
 			Solids.resize(SharedData.FileHeader.NumberOfSolids);
