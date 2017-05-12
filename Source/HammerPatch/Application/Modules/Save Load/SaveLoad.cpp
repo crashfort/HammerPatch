@@ -661,7 +661,8 @@ namespace
 			/*
 				Number of solids, this gets written to further down.
 			*/
-			vertfile.WriteSimple(0);
+			SaveData.NumberOfSolids = 0;
+			vertfile.WriteSimple(SaveData.NumberOfSolids);
 
 			char textfilename[1024];
 			strcpy_s(textfilename, filename);
