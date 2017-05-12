@@ -526,6 +526,22 @@ namespace
 			}
 		}
 
+		MapFace* FindFaceByID(int id)
+		{
+			for (auto& solid : LoadData.Solids)
+			{
+				for (auto& face : solid.Faces)
+				{
+					if (face.ID == id)
+					{
+						return &face;
+					}
+				}
+			}
+
+			return nullptr;
+		}
+
 		std::vector<MapSolid> Solids;
 	} LoadData;
 }
@@ -1213,24 +1229,7 @@ namespace
 			{
 				auto id = MapFace::GetFaceID(thisptr);
 
-				MapFace* sourceface = nullptr;
-
-				for (auto& solid : LoadData.Solids)
-				{
-					for (auto& face : solid.Faces)
-					{
-						if (face.ID == id)
-						{
-							sourceface = &face;
-							break;
-						}
-					}
-
-					if (sourceface)
-					{
-						break;
-					}
-				}
+				auto sourceface = LoadData.FindFaceByID(id);
 
 				for (size_t i = 0; i < winding->Numpoints; i++)
 				{
