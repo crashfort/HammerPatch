@@ -695,9 +695,21 @@ namespace
 
 				auto sourceface = LoadData.FindFaceByID(id);
 
-				for (size_t i = 0; i < winding->Numpoints; i++)
+				if (sourceface)
 				{
-					winding->Points[i] = sourceface->Points[i];
+					for (size_t i = 0; i < winding->Numpoints; i++)
+					{
+						winding->Points[i] = sourceface->Points[i];
+					}
+				}
+
+				else
+				{
+					HAP::MessageError
+					(
+						"HAP: No saved face with id %d\n",
+						id
+					);
 				}
 
 				flags = 0;
