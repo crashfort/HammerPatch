@@ -402,7 +402,10 @@ namespace
 				);
 			}
 
-			LoadData.LoadVertexFile(SharedData.VertFilePtr);
+			else
+			{
+				LoadData.LoadVertexFile(SharedData.VertFilePtr);
+			}
 
 			auto ret = ThisHook.GetOriginal()
 			(
