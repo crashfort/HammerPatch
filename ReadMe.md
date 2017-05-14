@@ -1,5 +1,17 @@
 # HammerPatch
 
+The program can be downloaded [here](https://github.com/crashfort/HammerPatch/releases). Visit [here](https://twitch.streamlabs.com/crashfort/) if you wish to support the development.
+
+## Installing
+Both `HammerPatch.dll` and `HammerPatchLauncher.exe` should go in the same directory as `hammer.exe`. This will be in the `bin` directory of each Source game. Examples:
+
+* steamapps\common\Counter-Strike Source\bin\
+* steamapps\common\Half-Life 2\bin\
+
+Instead of using `hammer.exe` to start, you should now use `HammerPatchLauncher.exe`.
+
+**This will not magically fix existing corrupted brushes, it will only have a change on brushes that were saved with this.**
+
 ## Vertices moving on load
 In default Hammer, unless your geometry is of perfectly straight angles, the vertices will move every time you open the map. This is because the vertices' positions are recalculated every time from plane points. This is a lossy process and will only get worse every time the map is loaded.
 
