@@ -10,7 +10,7 @@ Both `HammerPatch.dll` and `HammerPatchLauncher.exe` should go in the same direc
 
 Instead of using `hammer.exe` to start, you should now use `HammerPatchLauncher.exe`.
 
-**This will not magically fix existing corrupted brushes, it will only have a change on brushes that were saved with this.**
+**This will not magically fix existing corrupted brushes, it will only have a change on new brushes that were saved with this.**
 
 ## Vertices moving on load
 In default Hammer, unless your geometry is of perfectly straight angles, the vertices will move every time you open the map. This is because the vertices' positions are recalculated every time from plane points. This is a lossy process and will only get worse every time the map is loaded.
