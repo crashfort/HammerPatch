@@ -526,13 +526,16 @@ namespace
 				);
 			}
 
-			/*
-				Reset the header fields, it all gets overwritten later.
-			*/
-			SharedData.FileHeader = {};
-			SharedData.FileHeader.FileVersion = VertexSaveData::Version;
+			if (vertfile)
+			{
+				/*
+					Reset the header fields, it all gets overwritten later.
+				*/
+				SharedData.FileHeader = {};
+				SharedData.FileHeader.FileVersion = VertexSaveData::Version;
 
-			vertfile.WriteSimple(SharedData.FileHeader);
+				vertfile.WriteSimple(SharedData.FileHeader);
+			}
 
 			auto ret = ThisHook.GetOriginal()
 			(
@@ -542,8 +545,11 @@ namespace
 				saveflags
 			);
 
-			vertfile.SeekAbsolute(0);
-			vertfile.WriteSimple(SharedData.FileHeader);
+			if (vertfile)
+			{
+				vertfile.SeekAbsolute(0);
+				vertfile.WriteSimple(SharedData.FileHeader);
+			}
 
 			SaveData.TextFilePtr = nullptr;
 			SharedData.VertFilePtr = nullptr;
