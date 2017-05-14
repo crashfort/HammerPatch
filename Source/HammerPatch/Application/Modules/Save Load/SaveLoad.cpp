@@ -527,7 +527,7 @@ namespace
 			}
 
 			/*
-				Reset the solid counter, the header gets rewritten later.
+				Reset the header fields, it all gets overwritten later.
 			*/
 			SharedData.FileHeader = {};
 			SharedData.FileHeader.FileVersion = VertexSaveData::Version;
