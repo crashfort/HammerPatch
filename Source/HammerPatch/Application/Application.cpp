@@ -247,13 +247,20 @@ void HAP::AddStartupFunction(const StartupFuncData& data)
 
 void HAP::CallStartupFunctions()
 {
+	const auto& funcs = MainApplication.StartupFunctions;
+
+	if (funcs.empty())
+	{
+		return;
+	}
+
 	MessageNormal
 	(
 		"HAP: Calling %d startup procedures\n",
 		MainApplication.StartupFunctions.size()
 	);
 
-	for (const auto& entry : MainApplication.StartupFunctions)
+	for (const auto& entry : funcs)
 	{
 		auto res = entry.Function();
 
