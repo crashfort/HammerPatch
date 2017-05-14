@@ -46,12 +46,6 @@ namespace
 				name
 			);
 
-			ShowWindow
-			(
-				GetConsoleWindow(),
-				SW_SHOWNORMAL
-			);
-
 			return 1;
 		}
 
