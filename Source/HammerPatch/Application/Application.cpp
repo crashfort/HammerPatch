@@ -30,11 +30,14 @@ namespace
 					return;
 				}
 
-				SetConsoleTextAttribute
-				(
-					StdOutHandle,
-					attributes
-				);
+				if (attributes > 0)
+				{
+					SetConsoleTextAttribute
+					(
+						StdOutHandle,
+						attributes
+					);
+				}
 
 				WriteConsoleA
 				(
