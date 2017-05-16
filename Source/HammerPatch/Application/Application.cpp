@@ -257,7 +257,7 @@ void HAP::CallStartupFunctions()
 	MessageNormal
 	(
 		"HAP: Calling %d startup procedures\n",
-		MainApplication.StartupFunctions.size()
+		funcs.size()
 	);
 
 	for (const auto& entry : funcs)
