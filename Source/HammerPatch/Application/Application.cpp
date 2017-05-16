@@ -30,14 +30,11 @@ namespace
 					return;
 				}
 
-				if (attributes > 0)
-				{
-					SetConsoleTextAttribute
-					(
-						StdOutHandle,
-						attributes
-					);
-				}
+				SetConsoleTextAttribute
+				(
+					StdOutHandle,
+					attributes
+				);
 
 				WriteConsoleA
 				(
@@ -48,14 +45,11 @@ namespace
 					nullptr
 				);
 
-				if (attributes > 0)
-				{
-					SetConsoleTextAttribute
-					(
-						StdOutHandle,
-						DefaultAttributes
-					);
-				}
+				SetConsoleTextAttribute
+				(
+					StdOutHandle,
+					DefaultAttributes
+				);
 			}
 		} Console;
 	};
