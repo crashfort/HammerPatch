@@ -175,6 +175,9 @@ namespace
 	{
 		static Vector3* GetPointsPtr(void* thisptr)
 		{
+			/*
+				Static structure offset May 8 2017
+			*/
 			HAP::StructureWalker walker(thisptr);
 			auto ret = *(Vector3**)walker.Advance(340);
 
@@ -183,6 +186,9 @@ namespace
 
 		static int GetPointCount(void* thisptr)
 		{
+			/*
+				Static structure offset May 8 2017
+			*/
 			HAP::StructureWalker walker(thisptr);
 			auto ret = *(int*)walker.Advance(344);
 
@@ -191,6 +197,9 @@ namespace
 
 		static int GetFaceID(void* thisptr)
 		{
+			/*
+				Static structure offset May 8 2017
+			*/
 			HAP::StructureWalker walker(thisptr);
 			auto ret = *(int*)walker.Advance(412);
 			
@@ -207,6 +216,9 @@ namespace
 	{
 		static int GetID(void* thisptr)
 		{
+			/*
+				Static structure offset May 8 2017
+			*/
 			HAP::StructureWalker walker(thisptr);
 			auto ret = *(int*)walker.Advance(164);
 
@@ -215,6 +227,9 @@ namespace
 
 		static int GetFaceCount(void* thisptr)
 		{
+			/*
+				Static structure offset May 8 2017
+			*/
 			HAP::StructureWalker walker(thisptr);
 			auto ret = *(short*)walker.Advance(556);
 
