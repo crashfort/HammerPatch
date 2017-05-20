@@ -225,10 +225,10 @@ void HAP::MessageError(const char* message)
 		FOREGROUND_RED
 	);
 
-	ShowWindow
+	FlashWindow
 	(
 		GetConsoleWindow(),
-		SW_SHOW
+		true
 	);
 }
 
