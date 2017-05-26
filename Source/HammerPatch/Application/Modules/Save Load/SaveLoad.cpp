@@ -443,6 +443,11 @@ namespace
 					"HAP: Loaded map \"%s\"\n",
 					actualname
 				);
+
+				/*
+					This memory is not used anymore
+				*/
+				LoadData.Solids.clear();
 			}
 
 			SharedData.VertFilePtr = nullptr;
