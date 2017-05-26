@@ -12,6 +12,8 @@ Instead of using `hammer.exe` to start, you should now use `HammerPatchLauncher.
 
 **This will not magically fix existing corrupted brushes, it will only have a change on new brushes that were saved with this.**
 
+Now when you save a map with HammerPatch loaded, it will create additional files next to the VMF. The `.hpverts` file contains the vertex data in binary form and the `.hpvertstext` contains a human readable representation. Only the binary file is used by the program.
+
 ## Vertices moving on load
 In default Hammer, unless your geometry is of perfectly straight angles, the vertices will move every time you open the map. This is because the vertices' positions are recalculated every time from plane points. This is a lossy process and will only get worse every time the map is loaded.
 
