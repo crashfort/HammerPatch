@@ -282,8 +282,8 @@ namespace
 
 			HAP::MessageNormal
 			(
-				"HAP: Master vertex version: %d\n"
-				"HAP: Map vertex version: %d\n",
+				"HAP: Master version: %d\n"
+				"HAP: Map version: %d\n",
 				VertexSaveData::Version,
 				fileversion
 			);
