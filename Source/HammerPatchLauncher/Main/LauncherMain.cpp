@@ -198,9 +198,8 @@ namespace
 void wmain(int argc, wchar_t* argv[])
 {
 	wchar_t hammerexe[1024];
-	GetModuleFileNameW(nullptr, hammerexe, sizeof(hammerexe));
-	RemoveFileName(hammerexe);
-	wcscat_s(hammerexe, L"hammer.exe");
+	GetCurrentDirectoryW(sizeof(hammerexe), hammerexe);
+	wcscat_s(hammerexe, L"\\hammer.exe");
 
 	try
 	{
