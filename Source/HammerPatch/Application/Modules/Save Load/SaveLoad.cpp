@@ -183,11 +183,26 @@ namespace
 
 		static int GetFaceCount(void* thisptr)
 		{
-			/*
-				Static structure offset May 8 2017
-			*/
+			int offset = 0;
+
+			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			{
+				/*
+					Static CSGO structure offset August 27 2017
+				*/
+				offset = 564;
+			}
+
+			else
+			{
+				/*
+					Static 2013 structure offset May 8 2017
+				*/
+				offset = 556;
+			}
+
 			HAP::StructureWalker walker(thisptr);
-			auto ret = *(short*)walker.Advance(556);
+			auto ret = *(short*)walker.Advance(offset);
 
 			return ret;
 		}
@@ -289,23 +304,25 @@ namespace
 	namespace Module_MapDocLoad
 	{
 		/*
-			0x10097AC0 static Hammer IDA address May 8 2017
+			0x10097AC0 static 2013 Hammer IDA address May 8 2017
+			0x100A0B90 static CSGO Hammer IDA address August 27 2017
 		*/
-		auto Pattern = HAP::MemoryPattern
-		(
-			"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00\x81\xEC\x00\x00\x00\x00\xA1\x00\x00\x00\x00\x85\xC0\x53"
-		);
-
-		auto Mask =
-		(
-			"xxxxxx????xx????xxxx????xx????x????xxx"
-		);
+		auto Pattern2013 = "55 8B EC 6A FF 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 64 89 25 ?? ?? ?? ?? 81 EC ?? ?? ?? ?? A1 ?? ?? ?? ?? 85 C0 53 56 57 0F 94 C3 8B F9 40 88 5D F2 A3 ?? ?? ?? ?? 83 BF ?? ?? ?? ?? ?? 75 34 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 04 89 45 EC C7 45 ?? ?? ?? ?? ?? 85 C0 74 0A 57 8B C8 E8 ?? ?? ?? ?? EB 02";
+		auto PatternCSGO = "55 8B EC 6A FF 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 64 89 25 ?? ?? ?? ?? 81 EC ?? ?? ?? ?? A1 ?? ?? ?? ?? 85 C0 53 8B D9 0F 94 C1 40 88 4D F2 56 A3 ?? ?? ?? ?? 83 BB ?? ?? ?? ?? ?? 75 37 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 04 89 45 E8 C7 45 ?? ?? ?? ?? ?? 85 C0 74 0A 53 8B C8 E8 ?? ?? ?? ?? EB 02";
 
 		bool __fastcall Override(void* thisptr, void* edx, const char* filename, bool unk);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapDocLoad", Override, Pattern, Mask};
+		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapDocLoad", Override, []()
+		{
+			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			{
+				return PatternCSGO;
+			}
+
+			return Pattern2013;
+		}());
 
 		bool __fastcall Override(void* thisptr, void* edx, const char* filename, bool unk)
 		{
@@ -357,24 +374,25 @@ namespace
 	namespace Module_MapDocSave
 	{
 		/*
-			0x100A36E0 static Hammer IDA address May 8 2017
+			0x100A36E0 static 2013 Hammer IDA address May 8 2017
+			0x100B3770 static CSGO Hammer IDA address August 27 2017
 		*/
-		auto Pattern = HAP::MemoryPattern
-		(
-			"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00\x81\xEC\x00\x00\x00\x00\x53\x56\x57\x8B\xF9\x8D\x8D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\xC7\x45\x00\x00\x00\x00\x00\x8D\x8D\x00\x00\x00\x00\x8B\x5D\x08\x6A\x01\x53\xE8\x00\x00\x00\x00\x8B\xCF\x8B\xF0\xE8\x00\x00\x00\x00\x68\x00\x00\x00\x00\xE8\x00\x00\x00\x00"
-		);
-
-		auto Mask =
-		(
-			"xxxxxx????xx????xxxx????xx????xxxxxxx????x????xx"
-			"?????xx????xxxxxxx????xxxxx????x????x????"
-		);
+		auto Pattern2013 = "55 8B EC 6A FF 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 64 89 25 ?? ?? ?? ?? 81 EC ?? ?? ?? ?? 53 56 57 8B F9 8D 8D ?? ?? ?? ?? E8 ?? ?? ?? ?? C7 45 ?? ?? ?? ?? ?? 8D 8D ?? ?? ?? ?? 8B 5D 08 6A 01 53 E8 ?? ?? ?? ?? 8B CF 8B F0 E8 ?? ?? ?? ?? 68 ?? ?? ?? ??";
+		auto PatternCSGO = "55 8B EC 6A FF 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 64 89 25 ?? ?? ?? ?? 81 EC ?? ?? ?? ?? 53 56 8B D9 8D 8D ?? ?? ?? ?? 57 89 5D E4 E8 ?? ?? ?? ?? C7 45 ?? ?? ?? ?? ?? 8B 75 08 68 ?? ?? ?? ?? 56 E8 ?? ?? ?? ?? 83 C4 08 89 85 ?? ?? ?? ?? 85 C0 75 05 8D 78 02 EB 0C C7 85 ?? ?? ?? ?? ?? ?? ?? ?? 33 FF 8B CB E8 ?? ?? ?? ?? 8B 0D ?? ?? ?? ?? 68 ?? ?? ?? ??";
 
 		bool __fastcall Override(void* thisptr, void* edx, const char* filename, int saveflags);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapDocSave", Override, Pattern, Mask};
+		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapDocSave", Override, []()
+		{
+			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			{
+				return PatternCSGO;
+			}
+
+			return Pattern2013;
+		}());
 
 		bool __fastcall Override(void* thisptr, void* edx, const char* filename, int saveflags)
 		{
@@ -437,23 +455,25 @@ namespace
 	namespace Module_MapSolidSave
 	{
 		/*
-			0x10149C90 static Hammer IDA address May 8 2017
+			0x10149C90 static 2013 Hammer IDA address May 8 2017
+			0x1017DC20 static CSGO Hammer IDA address August 27 2017
 		*/
-		auto Pattern = HAP::MemoryPattern
-		(
-			"\x55\x8B\xEC\x83\xEC\x08\x57\x8B\xF9\x8B\x4D\x0C\x57\x89\x7D\xFC\xE8\x00\x00\x00\x00\x84\xC0"
-		);
-
-		auto Mask =
-		(
-			"xxxxxxxxxxxxxxxxx????xx"
-		);
+		auto Pattern2013 = "55 8B EC 83 EC 08 57 8B F9 8B 4D 0C 57 89 7D FC E8 ?? ?? ?? ?? 84 C0 75 09 33 C0 5F 8B E5 5D C2 08 00 80 BF ?? ?? ?? ?? ?? 53 8B 5D 08 75 14 68 ?? ?? ?? ?? 8B CB E8 ?? ?? ?? ?? 85 C0 0F 85 ?? ?? ?? ??";
+		auto PatternCSGO = "55 8B EC 83 EC 08 8B C1 8B 4D 0C 89 45 FC 80 39 00 74 11 F6 80 ?? ?? ?? ?? ?? 75 08 33 C0 8B E5 5D C2 08 00 F6 80 ?? ?? ?? ?? ?? 53 8B 5D 08 56 57 75 16 68 ?? ?? ?? ?? 8B CB E8 ?? ?? ?? ?? 8B F0 85 F6 0F 85 ?? ?? ?? ??";
 
 		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapSolidSave", Override, Pattern, Mask};
+		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapSolidSave", Override, []()
+		{
+			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			{
+				return PatternCSGO;
+			}
+
+			return Pattern2013;
+		}());
 
 		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo)
 		{
@@ -480,23 +500,25 @@ namespace
 	namespace Module_MapFaceCreateFaceFromWinding
 	{
 		/*
-			0x101302A0 static Hammer IDA address May 9 2017
+			0x101302A0 static 2013 Hammer IDA address May 9 2017
+			0x10162D70 static CSGO Hammer IDA address August 27 2017
 		*/
-		auto Pattern = HAP::MemoryPattern
-		(
-			"\x55\x8B\xEC\x51\x53\x56\x57\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x00\x00\x00\x00\x8B\x7D\x08\x83\xC4\x04\x8B\xCE\xFF\x37\xE8\x00\x00\x00\x00\x33\xDB"
-		);
-
-		auto Mask =
-		(
-			"xxxxxxxxxxxxxxx????xxxxxxxxxxx????xx"
-		);
+		auto Pattern2013 = "55 8B EC 51 53 56 57 8B F1 6A 00 89 75 FC E8 ?? ?? ?? ?? 8B 7D 08 83 C4 04 8B CE FF 37 E8 ?? ?? ?? ?? 33 DB 39 9E ?? ?? ?? ?? 7E 41 33 D2 8B FF 8B 47 04 43 8B 8E ?? ?? ?? ?? D9 04 02 D9 1C 0A 8B 47 04 8B 8E ?? ?? ?? ?? D9 44 10 04 D9 5C 11 04 8B 47 04 8B 8E ?? ?? ?? ?? D9 44 10 08 D9 5C 11 08 83 C2 0C 3B 9E ?? ?? ?? ?? 7C C3";
+		auto PatternCSGO = "55 8B EC 51 53 56 57 8B F9 89 7D FC FF 15 ?? ?? ?? ?? 8B 75 08 8B CF FF 05 ?? ?? ?? ?? D9 1D ?? ?? ?? ?? FF 36 E8 ?? ?? ?? ?? 33 DB 39 9F ?? ?? ?? ?? 7E 4B 33 D2 66 66 0F 1F 84 00 ?? ?? ?? ?? 8B 46 04 8D 52 0C 8B 8F ?? ?? ?? ?? 43 8B 44 02 F4 89 44 0A F4 8B 46 04 8B 8F ?? ?? ?? ?? 8B 44 02 F8 89 44 0A F8 8B 46 04 8B 8F ?? ?? ?? ?? 8B 44 02 FC 89 44 0A FC 3B 9F ?? ?? ?? ?? 7C C1";
 
 		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, Pattern, Mask};
+		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, []()
+		{
+			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			{
+				return PatternCSGO;
+			}
+
+			return Pattern2013;
+		}());
 
 		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags)
 		{
@@ -529,23 +551,25 @@ namespace
 	namespace Module_MapFaceSave
 	{
 		/*
-			0x10135C30 static Hammer IDA address May 7 2017
+			0x10135C30 static 2013 Hammer IDA address May 7 2017
+			0x10166350 static CSGO Hammer IDA address August 27 2017
 		*/
-		auto Pattern = HAP::MemoryPattern
-		(
-			"\x55\x8B\xEC\x81\xEC\x00\x00\x00\x00\x56\x57\x8B\xF1\xE8\x00\x00\x00\x00\x6A\x00\x8B\xCE\xE8\x00\x00\x00\x00"
-		);
-
-		auto Mask =
-		(
-			"xxxxx????xxxxx????xxxxx????"
-		);
+		auto Pattern2013 = "55 8B EC 81 EC ?? ?? ?? ?? 56 57 8B F1 E8 ?? ?? ?? ?? 6A 00 8B CE E8 ?? ?? ?? ?? 85 C0 75 07 8B CE E8 ?? ?? ?? ?? 8B 7D 08 8B CF 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 85 C0 0F 85 ?? ?? ?? ?? FF B6 ?? ?? ?? ?? 8B CF 68 ?? ?? ?? ??";
+		auto PatternCSGO = "55 8B EC 83 E4 C0 81 EC ?? ?? ?? ?? 56 57 8B F1 E8 ?? ?? ?? ?? 6A 00 8B CE E8 ?? ?? ?? ?? 85 C0 75 07 8B CE E8 ?? ?? ?? ?? 8B 7D 08 8B CF 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 85 C0 0F 85 ?? ?? ?? ?? FF B6 ?? ?? ?? ?? 8D 44 24 3C 68 ?? ?? ?? ??";
 
 		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapFaceSave", Override, Pattern, Mask};
+		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapFaceSave", Override, []()
+		{
+			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			{
+				return PatternCSGO;
+			}
+
+			return Pattern2013;
+		}());
 
 		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo)
 		{
