@@ -65,11 +65,7 @@ namespace
 
 	struct ProcessWriter
 	{
-		ProcessWriter
-		(
-			HANDLE process,
-			void* startaddress
-		) :
+		ProcessWriter(HANDLE process, void* startaddress ) :
 			Process(process),
 			Address(static_cast<uint8_t*>(startaddress))
 		{
@@ -80,17 +76,7 @@ namespace
 		{
 			SIZE_T written;
 
-			MS::ThrowIfZero
-			(
-				WriteProcessMemory
-				(
-					Process,
-					Address,
-					address,
-					size,
-					&written
-				)
-			);
+			MS::ThrowIfZero(WriteProcessMemory(Process, Address, address, size, &written));
 
 			auto retaddr = Address;
 
@@ -103,10 +89,7 @@ namespace
 		uint8_t* Address;
 	};
 
-	PROCESS_INFORMATION StartProcess
-	(
-		const wchar_t* path
-	)
+	PROCESS_INFORMATION StartProcess(const wchar_t* path)
 	{
 		/*
 			Always make the process' working directory
@@ -153,23 +136,9 @@ namespace
 
 	struct VirtualMemory
 	{
-		VirtualMemory
-		(
-			HANDLE process,
-			size_t size,
-			DWORD flags = MEM_COMMIT | MEM_RESERVE,
-			DWORD protect = PAGE_READWRITE
-		) :
-			Process(process)
+		VirtualMemory(HANDLE process, size_t size, DWORD flags = MEM_COMMIT | MEM_RESERVE, DWORD protect = PAGE_READWRITE) : Process(process)
 		{
-			Address = VirtualAllocEx
-			(
-				process,
-				nullptr,
-				size,
-				flags,
-				protect
-			);
+			Address = VirtualAllocEx(process, nullptr, size, flags, protect);
 
 			if (!Address)
 			{
@@ -179,13 +148,7 @@ namespace
 
 		~VirtualMemory()
 		{
-			VirtualFreeEx
-			(
-				Process,
-				Address,
-				0,
-				MEM_RELEASE
-			);
+			VirtualFreeEx(Process, Address, 0, MEM_RELEASE);
 		}
 			
 		void* Address = nullptr;
@@ -206,30 +169,14 @@ namespace
 		
 		auto stringaddr = writer.PushMemory(dllname, sizeof(dllname));
 
-		ScopedHandle loaderthread
-		(
-			CreateRemoteThread
-			(
-				process,
-				nullptr,
-				0,
-				(LPTHREAD_START_ROUTINE)LoadLibraryW,
-				stringaddr,
-				0,
-				nullptr
-			)
-		);
+		ScopedHandle loaderthread(CreateRemoteThread(process, nullptr, 0, (LPTHREAD_START_ROUTINE)LoadLibraryW, stringaddr, 0, nullptr));
 
 		if (!loaderthread.IsValid())
 		{
 			MS::ThrowLastError();
 		}
 
-		auto waitres = WaitForSingleObject
-		(
-			loaderthread.Get(),
-			INFINITE
-		);
+		auto waitres = WaitForSingleObject(loaderthread.Get(), INFINITE);
 
 		if (waitres != WAIT_OBJECT_0)
 		{
@@ -238,14 +185,7 @@ namespace
 
 		DWORD exitcode;
 
-		MS::ThrowIfZero
-		(
-			GetExitCodeThread
-			(
-				loaderthread.Get(),
-				&exitcode
-			)
-		);
+		MS::ThrowIfZero(GetExitCodeThread(loaderthread.Get(), &exitcode));
 
 		if (exitcode == 0)
 		{
@@ -277,14 +217,7 @@ void wmain(int argc, wchar_t* argv[])
 		{
 			DWORD exitcode;
 
-			MS::ThrowIfZero
-			(
-				GetExitCodeThread
-				(
-					thread.Get(),
-					&exitcode
-				)
-			);
+			MS::ThrowIfZero(GetExitCodeThread(thread.Get(), &exitcode));
 
 			/*
 				Hammer closed too early.

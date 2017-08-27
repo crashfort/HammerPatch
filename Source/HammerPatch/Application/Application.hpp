@@ -9,12 +9,7 @@ namespace HAP
 	using MessageFuncType = void(*)(const char*);
 
 	template <typename... Args>
-	void Message
-	(
-		MessageFuncType function,
-		const char* format,
-		Args&&... args
-	)
+	void Message(MessageFuncType function, const char* format, Args&&... args)
 	{
 		if (sizeof...(args) == 0)
 		{
@@ -31,52 +26,25 @@ namespace HAP
 	void MessageNormal(const char* message);
 
 	template <typename... Args>
-	void MessageNormal
-	(
-		const char* format,
-		Args&&... args
-	)
+	void MessageNormal(const char* format, Args&&... args)
 	{
-		Message
-		(
-			MessageNormal,
-			format,
-			std::forward<Args>(args)...
-		);
+		Message(MessageNormal, format, std::forward<Args>(args)...);
 	}
 
 	void MessageWarning(const char* message);
 
 	template <typename... Args>
-	void MessageWarning
-	(
-		const char* format,
-		Args&&... args
-	)
+	void MessageWarning(const char* format, Args&&... args)
 	{
-		Message
-		(
-			MessageWarning,
-			format,
-			std::forward<Args>(args)...
-		);
+		Message(MessageWarning, format, std::forward<Args>(args)...);
 	}
 
 	void MessageError(const char* message);
 
 	template <typename... Args>
-	void MessageError
-	(
-		const char* format,
-		Args&&... args
-	)
+	void MessageError(const char* format, Args&&... args)
 	{
-		Message
-		(
-			MessageError,
-			format,
-			std::forward<Args>(args)...
-		);
+		Message(MessageError, format, std::forward<Args>(args)...);
 	}
 
 	using ShutdownFuncType = void(*)();
@@ -84,10 +52,7 @@ namespace HAP
 
 	struct ShutdownFunctionAdder
 	{
-		ShutdownFunctionAdder
-		(
-			ShutdownFuncType function
-		)
+		ShutdownFunctionAdder(ShutdownFuncType function)
 		{
 			AddShutdownFunction(function);
 		}
@@ -105,11 +70,7 @@ namespace HAP
 
 	struct StartupFunctionAdder
 	{
-		StartupFunctionAdder
-		(
-			const char* name,
-			StartupFuncData::FuncType function
-		)
+		StartupFunctionAdder(const char* name, StartupFuncData::FuncType function)
 		{
 			StartupFuncData data;
 			data.Name = name;
@@ -130,15 +91,8 @@ namespace HAP
 	{
 		ModuleInformation(const char* name) : Name(name)
 		{
-			MODULEINFO info;
-			
-			K32GetModuleInformation
-			(
-				GetCurrentProcess(),
-				GetModuleHandleA(name),
-				&info,
-				sizeof(info)
-			);
+			MODULEINFO info;			
+			K32GetModuleInformation(GetCurrentProcess(), GetModuleHandleA(name), &info, sizeof(info));
 
 			MemoryBase = info.lpBaseOfDll;
 			MemorySize = info.SizeOfImage;
@@ -152,12 +106,7 @@ namespace HAP
 
 	struct HookModuleBase
 	{
-		HookModuleBase
-		(
-			const char* module,
-			const char* name,
-			void* newfunc
-		) :
+		HookModuleBase(const char* module, const char* name, void* newfunc) :
 			DisplayName(name),
 			Module(module),
 			NewFunction(newfunc)
@@ -177,25 +126,13 @@ namespace HAP
 
 	void AddModule(HookModuleBase* module);
 
-	void* GetAddressFromPattern
-	(
-		const ModuleInformation& library,
-		const uint8_t* pattern,
-		const char* mask
-	);
+	void* GetAddressFromPattern(const ModuleInformation& library, const uint8_t* pattern, const char* mask);
 
 	template <typename FuncSignature>
 	class HookModuleMask final : public HookModuleBase
 	{
 	public:
-		HookModuleMask
-		(
-			const char* module,
-			const char* name,
-			FuncSignature newfunction,
-			const uint8_t* pattern,
-			const char* mask
-		) :
+		HookModuleMask(const char* module, const char* name, FuncSignature newfunction, const uint8_t* pattern, const char* mask) :
 			HookModuleBase(module, name, newfunction),
 			Pattern(pattern),
 			Mask(mask)
@@ -235,13 +172,7 @@ namespace HAP
 	class HookModuleStaticAddressTest final : public HookModuleBase
 	{
 	public:
-		HookModuleStaticAddressTest
-		(
-			const char* module,
-			const char* name,
-			FuncSignature newfunction,
-			uintptr_t address
-		) :
+		HookModuleStaticAddressTest(const char* module, const char* name, FuncSignature newfunction, uintptr_t address) :
 			HookModuleBase(module, name, newfunction),
 			Address(address)
 		{
@@ -265,13 +196,7 @@ namespace HAP
 
 			TargetFunction = (void*)Address;
 
-			auto res = MH_CreateHookEx
-			(
-				TargetFunction,
-				NewFunction,
-				&OriginalFunction
-			);
-
+			auto res = MH_CreateHookEx(TargetFunction, NewFunction, &OriginalFunction);
 			return res;
 		}
 
@@ -287,13 +212,7 @@ namespace HAP
 	class HookModuleStaticAddress final : public HookModuleBase
 	{
 	public:
-		HookModuleStaticAddress
-		(
-			const char* module,
-			const char* name,
-			FuncSignature newfunction,
-			void* address
-		) :
+		HookModuleStaticAddress(const char* module, const char* name, FuncSignature newfunction, void* address) :
 			HookModuleBase(module, name, newfunction),
 			Address(address)
 		{
@@ -309,13 +228,7 @@ namespace HAP
 		{
 			TargetFunction = Address;
 
-			auto res = MH_CreateHookEx
-			(
-				TargetFunction,
-				NewFunction,
-				&OriginalFunction
-			);
-
+			auto res = MH_CreateHookEx(TargetFunction, NewFunction, &OriginalFunction);
 			return res;
 		}
 
@@ -327,13 +240,7 @@ namespace HAP
 	class HookModuleAPI final : public HookModuleBase
 	{
 	public:
-		HookModuleAPI
-		(
-			const char* module,
-			const char* name,
-			const char* exportname,
-			FuncSignature newfunction
-		) :
+		HookModuleAPI(const char* module, const char* name, const char* exportname, FuncSignature newfunction) :
 			HookModuleBase(module, name, newfunction),
 			ExportName(exportname)
 		{
@@ -350,15 +257,7 @@ namespace HAP
 			wchar_t module[64];
 			swprintf_s(module, L"%S", Module);
 
-			auto res = MH_CreateHookApiEx
-			(
-				module,
-				ExportName,
-				NewFunction,
-				&OriginalFunction,
-				&TargetFunction
-			);
-
+			auto res = MH_CreateHookApiEx(module, ExportName, NewFunction, &OriginalFunction, &TargetFunction);
 			return res;
 		}
 
@@ -368,20 +267,9 @@ namespace HAP
 
 	struct AddressFinder
 	{
-		AddressFinder
-		(
-			const char* module,
-			const uint8_t* pattern,
-			const char* mask,
-			int offset = 0
-		)
+		AddressFinder(const char* module, const uint8_t* pattern, const char* mask, int offset = 0)
 		{
-			auto addr = GetAddressFromPattern
-			(
-				module,
-				pattern,
-				mask
-			);
+			auto addr = GetAddressFromPattern(module, pattern, mask);
 
 			auto addrmod = static_cast<uint8_t*>(addr);
 
@@ -406,10 +294,7 @@ namespace HAP
 	*/
 	struct RelativeJumpFunctionFinder
 	{
-		RelativeJumpFunctionFinder
-		(
-			AddressFinder address
-		)
+		RelativeJumpFunctionFinder(AddressFinder address)
 		{
 			auto addrmod = static_cast<uint8_t*>(address.Get());
 
@@ -444,10 +329,7 @@ namespace HAP
 
 	struct StructureWalker
 	{
-		StructureWalker
-		(
-			void* address
-		) :
+		StructureWalker(void* address) :
 			Address(static_cast<uint8_t*>(address)),
 			Start(Address)
 		{

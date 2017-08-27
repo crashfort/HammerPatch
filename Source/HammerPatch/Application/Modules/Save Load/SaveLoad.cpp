@@ -65,13 +65,7 @@ namespace
 			{
 				[&]()
 				{
-					return fwrite
-					(
-						&args,
-						sizeof(args),
-						1,
-						Get()
-					);
+					return fwrite(&args, sizeof(args), 1, Get());
 				}()...
 			};
 
@@ -86,35 +80,15 @@ namespace
 			return true;
 		}
 
-		size_t WriteRegion
-		(
-			void* start,
-			size_t size,
-			int count = 1
-		)
+		size_t WriteRegion(void* start, size_t size, int count = 1)
 		{
-			return fwrite
-			(
-				start,
-				size,
-				count,
-				Get()
-			);
+			return fwrite(start, size, count, Get());
 		}
 
 		template <typename... Args>
-		int WriteText
-		(
-			const char* format,
-			Args&&... args
-		)
+		int WriteText(const char* format, Args&&... args)
 		{
-			return fprintf_s
-			(
-				Get(),
-				format,
-				std::forward<Args>(args)...
-			);
+			return fprintf_s(Get(), format, std::forward<Args>(args)...);
 		}
 
 		template <typename... Types>
@@ -124,14 +98,7 @@ namespace
 			{
 				[&]()
 				{
-					return fread_s
-					(
-						&args,
-						sizeof(args),
-						sizeof(args),
-						1,
-						Get()
-					);
+					return fread_s(&args, sizeof(args), sizeof(args), 1, Get());
 				}()...
 			};
 
@@ -147,20 +114,9 @@ namespace
 		}
 
 		template <typename T>
-		size_t ReadRegion
-		(
-			std::vector<T>& vec,
-			int count = 1
-		)
+		size_t ReadRegion(std::vector<T>& vec, int count = 1)
 		{
-			return fread_s
-			(
-				&vec[0],
-				vec.size() * sizeof(T),
-				sizeof(T),
-				count,
-				Get()
-			);
+			return fread_s(&vec[0], vec.size() * sizeof(T), sizeof(T), count, Get());
 		}
 
 		void SeekAbsolute(size_t pos)
@@ -370,34 +326,15 @@ namespace
 			"xxxxxx????xx????xxxx????xx????x????xxx"
 		);
 
-		bool __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			const char* filename,
-			bool unk
-		);
+		bool __fastcall Override(void* thisptr, void* edx, const char* filename, bool unk);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook
-		{
-			"hammer_dll.dll",
-			"MapDocLoad",
-			Override,
-			Pattern,
-			Mask
-		};
+		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapDocLoad", Override, Pattern, Mask};
 
 		#pragma endregion
 
-		bool __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			const char* filename,
-			bool unk
-		)
+		bool __fastcall Override(void* thisptr, void* edx, const char* filename, bool unk)
 		{
 			SharedData.IsLoading = true;
 
@@ -411,10 +348,7 @@ namespace
 			{
 				SharedData.VertFilePtr = nullptr;
 
-				HAP::MessageError
-				(
-					"HAP: Could not open vertex file\n"
-				);
+				HAP::MessageError("HAP: Could not open vertex file\n");
 			}
 
 			else
@@ -422,13 +356,7 @@ namespace
 				LoadData.LoadVertexFile(SharedData.VertFilePtr);
 			}
 
-			auto ret = ThisHook.GetOriginal()
-			(
-				thisptr,
-				edx,
-				filename,
-				unk
-			);
+			auto ret = ThisHook.GetOriginal()(thisptr, edx, filename, unk);
 
 			if (SharedData.VertFilePtr)
 			{
@@ -438,11 +366,7 @@ namespace
 				PathStripPathA(actualname);
 				PathRemoveExtensionA(actualname);
 
-				HAP::MessageNormal
-				(
-					"HAP: Loaded map \"%s\"\n",
-					actualname
-				);
+				HAP::MessageNormal("HAP: Loaded map \"%s\"\n", actualname);
 
 				/*
 					This memory is not used anymore
@@ -482,34 +406,15 @@ namespace
 			"?????xx????xxxxxxx????xxxxx????x????x????"
 		);
 
-		bool __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			const char* filename,
-			int saveflags
-		);
+		bool __fastcall Override(void* thisptr, void* edx, const char* filename, int saveflags);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook
-		{
-			"hammer_dll.dll",
-			"MapDocSave",
-			Override,
-			Pattern,
-			Mask
-		};
+		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapDocSave", Override, Pattern, Mask};
 
 		#pragma endregion
 
-		bool __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			const char* filename,
-			int saveflags
-		)
+		bool __fastcall Override(void* thisptr, void* edx, const char* filename, int saveflags)
 		{
 			SharedData.IsSaving = true;
 
@@ -523,10 +428,7 @@ namespace
 			{
 				SharedData.VertFilePtr = nullptr;
 
-				HAP::MessageError
-				(
-					"HAP: Could not create vertex file\n"
-				);
+				HAP::MessageError("HAP: Could not create vertex file\n");
 			}
 
 			char textfilename[1024];
@@ -540,10 +442,7 @@ namespace
 			{
 				SaveData.TextFilePtr = nullptr;
 
-				HAP::MessageError
-				(
-					"HAP: Could not create vertex text file\n"
-				);
+				HAP::MessageError("HAP: Could not create vertex text file\n");
 			}
 
 			if (vertfile)
@@ -557,13 +456,7 @@ namespace
 				vertfile.WriteSimple(SharedData.FileHeader);
 			}
 
-			auto ret = ThisHook.GetOriginal()
-			(
-				thisptr,
-				edx,
-				filename,
-				saveflags
-			);
+			auto ret = ThisHook.GetOriginal()(thisptr, edx, filename, saveflags);
 
 			if (vertfile)
 			{
@@ -597,34 +490,15 @@ namespace
 			"xxxxxxxxxxxxxxxxx????xx"
 		);
 
-		int __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			void* file,
-			void* saveinfo
-		);
+		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook
-		{
-			"hammer_dll.dll",
-			"MapSolidSave",
-			Override,
-			Pattern,
-			Mask
-		};
+		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapSolidSave", Override, Pattern, Mask};
 
 		#pragma endregion
 
-		int __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			void* file,
-			void* saveinfo
-		)
+		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo)
 		{
 			if (SharedData.VertFilePtr)
 			{
@@ -633,30 +507,15 @@ namespace
 				auto id = MapSolid::GetID(thisptr);
 				auto facecount = MapSolid::GetFaceCount(thisptr);
 
-				SharedData.VertFilePtr->WriteSimple
-				(
-					id,
-					facecount
-				);
+				SharedData.VertFilePtr->WriteSimple(id, facecount);
 
 				if (SaveData.TextFilePtr)
 				{
-					SaveData.TextFilePtr->WriteText
-					(
-						"solid id: %d\n",
-						id
-					);
+					SaveData.TextFilePtr->WriteText("solid id: %d\n", id);
 				}
 			}
 
-			auto ret = ThisHook.GetOriginal()
-			(
-				thisptr,
-				edx,
-				file,
-				saveinfo
-			);
-
+			auto ret = ThisHook.GetOriginal()(thisptr, edx, file, saveinfo);
 			return ret;
 		}
 	}
@@ -680,34 +539,15 @@ namespace
 			"xxxxxxxxxxxxxxx????xxxxxxxxxxx????xx"
 		);
 
-		void __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			PlaneWinding* winding,
-			int flags
-		);
+		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook
-		{
-			"hammer_dll.dll",
-			"MapFaceCreateFaceFromWinding",
-			Override,
-			Pattern,
-			Mask
-		};
+		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, Pattern, Mask};
 
 		#pragma endregion
 
-		void __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			PlaneWinding* winding,
-			int flags
-		)
+		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags)
 		{
 			if (SharedData.IsLoading)
 			{
@@ -725,23 +565,13 @@ namespace
 
 				else
 				{
-					HAP::MessageError
-					(
-						"HAP: No saved face with id %d\n",
-						id
-					);
+					HAP::MessageError("HAP: No saved face with id %d\n", id);
 				}
 
 				flags = 0;
 			}
 
-			ThisHook.GetOriginal()
-			(
-				thisptr,
-				edx,
-				winding,
-				flags
-			);
+			ThisHook.GetOriginal()(thisptr, edx, winding, flags);
 		}
 	}
 
@@ -764,34 +594,15 @@ namespace
 			"xxxxx????xxxxx????xxxxx????"
 		);
 
-		int __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			void* file,
-			void* saveinfo
-		);
+		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo);
 
 		using ThisFunction = decltype(Override)*;
 
-		HAP::HookModuleMask<ThisFunction> ThisHook
-		{
-			"hammer_dll.dll",
-			"MapFaceSave",
-			Override,
-			Pattern,
-			Mask
-		};
+		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapFaceSave", Override, Pattern, Mask};
 
 		#pragma endregion
 
-		int __fastcall Override
-		(
-			void* thisptr,
-			void* edx,
-			void* file,
-			void* saveinfo
-		)
+		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo)
 		{
 			if (SharedData.VertFilePtr)
 			{				
@@ -799,50 +610,23 @@ namespace
 				auto pointscount = MapFace::GetPointCount(thisptr);
 				auto faceid = MapFace::GetFaceID(thisptr);
 
-				SharedData.VertFilePtr->WriteSimple
-				(
-					faceid,
-					pointscount
-				);
+				SharedData.VertFilePtr->WriteSimple(faceid, pointscount);
 
-				SharedData.VertFilePtr->WriteRegion
-				(
-					pointsaddr,
-					sizeof(Vector3),
-					pointscount
-				);
+				SharedData.VertFilePtr->WriteRegion(pointsaddr, sizeof(Vector3), pointscount);
 
 				if (SaveData.TextFilePtr)
 				{
-					SaveData.TextFilePtr->WriteText
-					(
-						"\tface id: %d\n",
-						faceid
-					);
+					SaveData.TextFilePtr->WriteText("\tface id: %d\n", faceid);
 
 					for (size_t i = 0; i < pointscount; i++)
 					{
 						auto vec = pointsaddr[i];
-
-						SaveData.TextFilePtr->WriteText
-						(
-							"\t\t[%g %g %g]\n",
-							vec.X,
-							vec.Y,
-							vec.Z
-						);
+						SaveData.TextFilePtr->WriteText("\t\t[%g %g %g]\n", vec.X, vec.Y, vec.Z);
 					}
 				}
 			}
 
-			auto ret = ThisHook.GetOriginal()
-			(
-				thisptr,
-				edx,
-				file,
-				saveinfo
-			);
-
+			auto ret = ThisHook.GetOriginal()(thisptr, edx, file, saveinfo);
 			return ret;
 		}
 	}

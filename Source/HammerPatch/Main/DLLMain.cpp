@@ -17,11 +17,7 @@ namespace
 	{
 		HAP::CreateConsole();
 
-		HAP::MessageNormal
-		(
-			"HAP: Current version: %d\n",
-			ApplicationVersion
-		);
+		HAP::MessageNormal("HAP: Current version: %d\n", ApplicationVersion);
 
 		try
 		{
@@ -40,45 +36,22 @@ namespace
 
 		catch (const char* name)
 		{
-			HAP::MessageError
-			(
-				"HAP: Startup procedure \"%s\" failed\n",
-				name
-			);
-
+			HAP::MessageError("HAP: Startup procedure \"%s\" failed\n", name);
 			return 1;
 		}
 
-		HAP::MessageNormal
-		(
-			"HAP: HammerPatch loaded\n"
-		);
-
+		HAP::MessageNormal("HAP: HammerPatch loaded\n");
 		return 1;
 	}
 }
 
-BOOL APIENTRY DllMain
-(
-	HMODULE module,
-	DWORD reason,
-	LPVOID
-)
+BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID)
 {
 	switch (reason)
 	{
 		case DLL_PROCESS_ATTACH:
 		{
-			_beginthreadex
-			(
-				nullptr,
-				0,
-				MainThread,
-				nullptr,
-				0,
-				nullptr
-			);
-
+			_beginthreadex(nullptr, 0, MainThread, nullptr, 0, nullptr);
 			break;
 		}
 
