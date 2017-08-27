@@ -288,8 +288,6 @@ namespace
 {
 	namespace Module_MapDocLoad
 	{
-		#pragma region Init
-
 		/*
 			0x10097AC0 static Hammer IDA address May 8 2017
 		*/
@@ -308,8 +306,6 @@ namespace
 		using ThisFunction = decltype(Override)*;
 
 		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapDocLoad", Override, Pattern, Mask};
-
-		#pragma endregion
 
 		bool __fastcall Override(void* thisptr, void* edx, const char* filename, bool unk)
 		{
@@ -360,8 +356,6 @@ namespace
 
 	namespace Module_MapDocSave
 	{
-		#pragma region Init
-
 		/*
 			0x100A36E0 static Hammer IDA address May 8 2017
 		*/
@@ -381,8 +375,6 @@ namespace
 		using ThisFunction = decltype(Override)*;
 
 		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapDocSave", Override, Pattern, Mask};
-
-		#pragma endregion
 
 		bool __fastcall Override(void* thisptr, void* edx, const char* filename, int saveflags)
 		{
@@ -444,8 +436,6 @@ namespace
 
 	namespace Module_MapSolidSave
 	{
-		#pragma region Init
-
 		/*
 			0x10149C90 static Hammer IDA address May 8 2017
 		*/
@@ -464,8 +454,6 @@ namespace
 		using ThisFunction = decltype(Override)*;
 
 		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapSolidSave", Override, Pattern, Mask};
-
-		#pragma endregion
 
 		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo)
 		{
@@ -491,8 +479,6 @@ namespace
 
 	namespace Module_MapFaceCreateFaceFromWinding
 	{
-		#pragma region Init
-
 		/*
 			0x101302A0 static Hammer IDA address May 9 2017
 		*/
@@ -511,8 +497,6 @@ namespace
 		using ThisFunction = decltype(Override)*;
 
 		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, Pattern, Mask};
-
-		#pragma endregion
 
 		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags)
 		{
@@ -544,8 +528,6 @@ namespace
 
 	namespace Module_MapFaceSave
 	{
-		#pragma region Init
-
 		/*
 			0x10135C30 static Hammer IDA address May 7 2017
 		*/
@@ -564,8 +546,6 @@ namespace
 		using ThisFunction = decltype(Override)*;
 
 		HAP::HookModuleMask<ThisFunction> ThisHook{"hammer_dll.dll", "MapFaceSave", Override, Pattern, Mask};
-
-		#pragma endregion
 
 		int __fastcall Override(void* thisptr, void* edx, void* file, void* saveinfo)
 		{
