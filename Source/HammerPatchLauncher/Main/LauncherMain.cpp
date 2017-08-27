@@ -102,6 +102,7 @@ namespace
 
 		wchar_t args[1024];
 		wcscpy_s(args, path);
+		wcscat_s(args, L" -nop4");
 
 		STARTUPINFOW startinfo = {};
 		startinfo.cb = sizeof(startinfo);
@@ -216,7 +217,6 @@ void wmain(int argc, wchar_t* argv[])
 
 		{
 			DWORD exitcode;
-
 			MS::ThrowIfZero(GetExitCodeThread(thread.Get(), &exitcode));
 
 			/*
