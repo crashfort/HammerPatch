@@ -1,5 +1,6 @@
 #include "PrecompiledHeader.hpp"
 #include "Application.hpp"
+#include <cctype>
 
 namespace
 {
@@ -40,35 +41,44 @@ namespace
 
 	Application MainApplication;
 
-	/*
-		From Yalter's SPT
-	*/
 	namespace Memory
 	{
-		inline bool DataCompare(const uint8_t* data, const uint8_t* pattern, const char* mask)
+		/*
+			Not accessing the STL iterators in debug mode makes this run >10x faster, less sitting around waiting for nothing.
+		*/
+		inline bool DataCompare(const uint8_t* data, const HAP::BytePattern::Entry* pattern, size_t patternlength)
 		{
-			for (; *mask != 0; ++data, ++pattern, ++mask)
+			int index = 0;
+
+			for (size_t i = 0; i < patternlength; i++)
 			{
-				if (*mask == 'x' && *data != *pattern)
+				auto byte = *pattern;
+
+				if (!byte.Unknown && *data != byte.Value)
 				{
 					return false;
 				}
+				
+				++data;
+				++pattern;
+				++index;
 			}
 
-			return (*mask == 0);
+			return index == patternlength;
 		}
 
-		void* FindPattern(const void* start, size_t length, const uint8_t* pattern, const char* mask)
+		void* FindPattern(void* start, size_t searchlength, const HAP::BytePattern& pattern)
 		{
-			auto masklength = strlen(mask);
+			auto patternstart = pattern.Bytes.data();
+			auto length = pattern.Bytes.size();
 			
-			for (size_t i = 0; i <= length - masklength; ++i)
+			for (size_t i = 0; i <= searchlength - length; ++i)
 			{
-				auto addr = reinterpret_cast<const uint8_t*>(start) + i;
+				auto addr = (const uint8_t*)(start) + i;
 				
-				if (DataCompare(addr, pattern, mask))
+				if (DataCompare(addr, patternstart, length))
 				{
-					return const_cast<void*>(reinterpret_cast<const void*>(addr));
+					return (void*)(addr);
 				}
 			}
 
@@ -191,12 +201,56 @@ void HAP::CallStartupFunctions()
 	}
 }
 
+HAP::BytePattern HAP::GetPatternFromString(const char* input)
+{
+	BytePattern ret;
+
+	while (*input)
+	{
+		if (std::isspace(*input))
+		{
+			++input;
+		}
+
+		BytePattern::Entry entry;
+
+		if (std::isxdigit(*input))
+		{
+			entry.Unknown = false;
+			entry.Value = std::strtol(input, nullptr, 16);
+
+			input += 2;
+		}
+
+		else
+		{
+			entry.Unknown = true;
+			input += 2;
+		}
+
+		ret.Bytes.emplace_back(entry);
+	}
+
+	return ret;
+}
+
+void* HAP::GetAddressFromPattern(const ModuleInformation& library, const BytePattern& pattern)
+{
+	return Memory::FindPattern(library.MemoryBase, library.MemorySize, pattern);
+}
+
 void HAP::AddModule(HookModuleBase* module)
 {
 	MainApplication.Modules.emplace_back(module);
 }
 
-void* HAP::GetAddressFromPattern(const ModuleInformation& library, const uint8_t* pattern, const char* mask)
+bool HAP::IsGame(const wchar_t* test)
 {
-	return Memory::FindPattern(library.MemoryBase, library.MemorySize, pattern, mask);
+	wchar_t directory[4096];
+	GetCurrentDirectoryW(sizeof(directory), directory);
+	PathRemoveFileSpecW(directory);
+	
+	auto name = PathFindFileNameW(directory);
+
+	return _wcsicmp(name, test) == 0;
 }
