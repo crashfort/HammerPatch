@@ -530,10 +530,8 @@ namespace
 
 				if (sourceface)
 				{
-					for (size_t i = 0; i < winding->Numpoints; i++)
-					{
-						winding->Points[i] = sourceface->Points[i];
-					}
+					auto size = sourceface->Points.size() * sizeof(Vector3);
+					std::memcpy(winding->Points, sourceface->Points.data(), size);
 				}
 
 				else
