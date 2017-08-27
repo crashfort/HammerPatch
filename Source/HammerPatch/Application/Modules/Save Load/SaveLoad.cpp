@@ -236,13 +236,7 @@ namespace
 			int32_t fileversion;
 			fileptr->ReadSimple(fileversion);
 
-			HAP::MessageNormal
-			(
-				"HAP: Master version: %d\n"
-				"HAP: Map version: %d\n",
-				VertexSaveData::Version,
-				fileversion
-			);
+			HAP::MessageNormal("HAP: Master version: %d\n" "HAP: Map version: %d\n", VertexSaveData::Version, fileversion);
 
 			fileptr->SeekAbsolute(0);
 			fileptr->ReadSimple(SharedData.FileHeader);
@@ -253,31 +247,17 @@ namespace
 			{
 				int facecount;
 
-				SharedData.VertFilePtr->ReadSimple
-				(
-					cursolid.ID,
-					facecount
-				);
-
+				SharedData.VertFilePtr->ReadSimple(cursolid.ID, facecount);
 				cursolid.Faces.resize(facecount);
 
 				for (auto& curface : cursolid.Faces)
 				{
 					int pointscount;
 
-					SharedData.VertFilePtr->ReadSimple
-					(
-						curface.ID,
-						pointscount
-					);
-
+					SharedData.VertFilePtr->ReadSimple(curface.ID, pointscount);
 					curface.Points.resize(pointscount);
 
-					SharedData.VertFilePtr->ReadRegion
-					(
-						curface.Points,
-						pointscount
-					);
+					SharedData.VertFilePtr->ReadRegion(curface.Points, pointscount);
 
 					curface.ParentSolidID = cursolid.ID;
 				}
