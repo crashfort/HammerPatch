@@ -7,7 +7,7 @@ namespace
 {
 	enum
 	{
-		ApplicationVersion = 1
+		ApplicationVersion = 2
 	};
 }
 
