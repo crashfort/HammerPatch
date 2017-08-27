@@ -246,6 +246,11 @@ void HAP::AddModule(HookModuleBase* module)
 
 bool HAP::IsGame(const wchar_t* test)
 {
+	/*
+		Takes the current directory, goes up a step, gets the directory name and compares
+		against parameter "test".
+	*/
+
 	wchar_t directory[4096];
 	GetCurrentDirectoryW(sizeof(directory), directory);
 	PathRemoveFileSpecW(directory);
