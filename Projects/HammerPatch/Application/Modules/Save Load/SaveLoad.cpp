@@ -523,7 +523,7 @@ namespace
 
 		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags)
 		{
-			if (SharedData.IsLoading)
+			if (SharedData.IsLoading && SharedData.VertFilePtr)
 			{
 				auto id = MapFace::GetFaceID(thisptr);
 
