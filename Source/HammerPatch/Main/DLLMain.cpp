@@ -17,7 +17,7 @@ namespace
 	{
 		HAP::CreateConsole();
 
-		HAP::MessageNormal("HAP: Current version: %d\n", ApplicationVersion);
+		HAP::MessageNormal("Current version: %d\n", ApplicationVersion);
 
 		try
 		{
@@ -36,11 +36,11 @@ namespace
 
 		catch (const char* name)
 		{
-			HAP::MessageWarning("HAP: Startup procedure \"%s\" failed\n", name);
+			HAP::MessageWarning("Startup procedure \"%s\" failed\n", name);
 			return 1;
 		}
 
-		HAP::MessageNormal("HAP: HammerPatch loaded\n");
+		HAP::MessageNormal("HammerPatch loaded\n");
 		return 1;
 	}
 }

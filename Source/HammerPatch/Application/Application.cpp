@@ -100,11 +100,11 @@ void HAP::CreateModules()
 
 	if (res != MH_OK)
 	{
-		MessageWarning("HAP: Failed to initialize hooks\n");
+		MessageWarning("Failed to initialize hooks\n");
 		throw res;
 	}
 
-	MessageNormal("HAP: Creating %d modules\n", MainApplication.Modules.size());
+	MessageNormal("Creating %d modules\n", MainApplication.Modules.size());
 
 	for (auto module : MainApplication.Modules)
 	{
@@ -113,7 +113,7 @@ void HAP::CreateModules()
 
 		if (res != MH_OK)
 		{
-			MessageWarning("HAP: Could not enable module \"%s\": \"%s\"\n", name, MH_StatusToString(res));
+			MessageWarning("Could not enable module \"%s\": \"%s\"\n", name, MH_StatusToString(res));
 			throw res;
 		}
 
@@ -122,7 +122,7 @@ void HAP::CreateModules()
 
 		MH_EnableHook(function);
 
-		MessageNormal("HAP: Enabled module \"%s\" -> %s @ 0x%p\n", name, library, function);
+		MessageNormal("Enabled module \"%s\" -> %s @ 0x%p\n", name, library, function);
 	}
 }
 
@@ -167,7 +167,7 @@ void HAP::CallStartupFunctions()
 		return;
 	}
 
-	MessageNormal("HAP: Calling %d startup procedures\n", funcs.size());
+	MessageNormal("Calling %d startup procedures\n", funcs.size());
 
 	for (const auto& entry : funcs)
 	{
@@ -178,7 +178,7 @@ void HAP::CallStartupFunctions()
 			throw entry.Name;
 		}
 
-		MessageNormal("HAP: Startup procedure \"%s\" passed\n", entry.Name);
+		MessageNormal("Startup procedure \"%s\" passed\n", entry.Name);
 	}
 }
 
