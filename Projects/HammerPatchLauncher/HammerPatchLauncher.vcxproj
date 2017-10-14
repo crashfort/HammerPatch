@@ -14,7 +14,7 @@
     <ProjectGuid>{C6F65CB5-BBC7-45F8-90A5-696D65FEACA5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Launcher</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>HammerPatchLauncher</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
