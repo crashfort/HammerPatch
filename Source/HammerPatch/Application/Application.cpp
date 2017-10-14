@@ -13,28 +13,20 @@ namespace
 		struct
 		{
 			HANDLE StdOutHandle = INVALID_HANDLE_VALUE;
-			WORD DefaultAttributes;
 
 			bool IsValid() const
 			{
 				return StdOutHandle != INVALID_HANDLE_VALUE;
 			}
 
-			void Write(const char* message, WORD attributes = 0)
+			void Write(const char* message)
 			{
 				if (!IsValid())
 				{
 					return;
 				}
 
-				if (attributes > 0)
-				{
-					SetConsoleTextAttribute(StdOutHandle, attributes);
-				}
-
 				WriteConsoleA(StdOutHandle, message, strlen(message), nullptr, nullptr);
-
-				SetConsoleTextAttribute(StdOutHandle, DefaultAttributes);
 			}
 		} Console;
 	};
@@ -97,11 +89,6 @@ void HAP::CreateConsole()
 
 	if (console.IsValid())
 	{
-		CONSOLE_SCREEN_BUFFER_INFO coninfo;
-		GetConsoleScreenBufferInfo(console.StdOutHandle, &coninfo);
-
-		console.DefaultAttributes = coninfo.wAttributes;
-
 		SetConsoleTitleA("HammerPatch Console");
 		ShowWindow(GetConsoleWindow(), SW_SHOWMINNOACTIVE);
 	}
@@ -113,7 +100,7 @@ void HAP::CreateModules()
 
 	if (res != MH_OK)
 	{
-		MessageError("HAP: Failed to initialize hooks\n");
+		MessageWarning("HAP: Failed to initialize hooks\n");
 		throw res;
 	}
 
@@ -126,7 +113,7 @@ void HAP::CreateModules()
 
 		if (res != MH_OK)
 		{
-			MessageError("HAP: Could not enable module \"%s\": \"%s\"\n", name, MH_StatusToString(res));
+			MessageWarning("HAP: Could not enable module \"%s\": \"%s\"\n", name, MH_StatusToString(res));
 			throw res;
 		}
 
@@ -158,13 +145,7 @@ void HAP::MessageNormal(const char* message)
 
 void HAP::MessageWarning(const char* message)
 {
-	MainApplication.Console.Write(message, FOREGROUND_RED | FOREGROUND_GREEN);
-}
-
-void HAP::MessageError(const char* message)
-{
-	MainApplication.Console.Write(message, FOREGROUND_RED);
-	FlashWindow(GetConsoleWindow(), true);
+	MainApplication.Console.Write(message);
 }
 
 void HAP::AddShutdownFunction(ShutdownFuncType function)

@@ -36,7 +36,7 @@ namespace
 
 		catch (const char* name)
 		{
-			HAP::MessageError("HAP: Startup procedure \"%s\" failed\n", name);
+			HAP::MessageWarning("HAP: Startup procedure \"%s\" failed\n", name);
 			return 1;
 		}
 

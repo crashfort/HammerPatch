@@ -251,7 +251,8 @@ namespace
 			int32_t fileversion;
 			fileptr->ReadSimple(fileversion);
 
-			HAP::MessageNormal("HAP: Master version: %d\n" "HAP: Map version: %d\n", VertexSaveData::Version, fileversion);
+			HAP::MessageNormal("HAP: Master version: %d\n", VertexSaveData::Version);
+			HAP::MessageNormal("HAP: Map version: %d\n", fileversion);
 
 			fileptr->SeekAbsolute(0);
 			fileptr->ReadSimple(SharedData.FileHeader);
@@ -338,7 +339,7 @@ namespace
 			{
 				SharedData.VertFilePtr = nullptr;
 
-				HAP::MessageError("HAP: Could not open vertex file\n");
+				HAP::MessageWarning("HAP: Could not open vertex file\n");
 			}
 
 			else
@@ -408,7 +409,7 @@ namespace
 			{
 				SharedData.VertFilePtr = nullptr;
 
-				HAP::MessageError("HAP: Could not create vertex file\n");
+				HAP::MessageWarning("HAP: Could not create vertex file\n");
 			}
 
 			char textfilename[1024];
@@ -422,7 +423,7 @@ namespace
 			{
 				SaveData.TextFilePtr = nullptr;
 
-				HAP::MessageError("HAP: Could not create vertex text file\n");
+				HAP::MessageWarning("HAP: Could not create vertex text file\n");
 			}
 
 			if (vertfile)
@@ -536,7 +537,7 @@ namespace
 
 				else
 				{
-					HAP::MessageError("HAP: No saved face with id %d\n", id);
+					HAP::MessageWarning("HAP: No saved face with id %d\n", id);
 				}
 
 				flags = 0;
