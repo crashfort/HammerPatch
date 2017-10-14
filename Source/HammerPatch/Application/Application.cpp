@@ -259,3 +259,8 @@ bool HAP::IsGame(const wchar_t* test)
 
 	return _wcsicmp(name, test) == 0;
 }
+
+bool HAP::IsCSGO()
+{
+	return IsGame(L"Counter-Strike Global Offensive");
+}

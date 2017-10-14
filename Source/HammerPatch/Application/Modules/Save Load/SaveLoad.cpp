@@ -185,7 +185,7 @@ namespace
 		{
 			int offset = 0;
 
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				/*
 					Static CSGO structure offset August 27 2017
@@ -316,7 +316,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapDocLoad", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -386,7 +386,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapDocSave", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -467,7 +467,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapSolidSave", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -512,7 +512,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -561,7 +561,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapFaceSave", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}

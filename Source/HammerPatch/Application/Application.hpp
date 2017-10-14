@@ -198,4 +198,5 @@ namespace HAP
 	};
 
 	bool IsGame(const wchar_t* test);
+	bool IsCSGO();
 }
