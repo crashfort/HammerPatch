@@ -185,7 +185,7 @@ namespace
 		{
 			int offset = 0;
 
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				/*
 					Static CSGO structure offset August 27 2017
@@ -251,7 +251,8 @@ namespace
 			int32_t fileversion;
 			fileptr->ReadSimple(fileversion);
 
-			HAP::MessageNormal("HAP: Master version: %d\n" "HAP: Map version: %d\n", VertexSaveData::Version, fileversion);
+			HAP::MessageNormal("Master version: %d\n", VertexSaveData::Version);
+			HAP::MessageNormal("Map version: %d\n", fileversion);
 
 			fileptr->SeekAbsolute(0);
 			fileptr->ReadSimple(SharedData.FileHeader);
@@ -316,7 +317,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapDocLoad", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -338,7 +339,7 @@ namespace
 			{
 				SharedData.VertFilePtr = nullptr;
 
-				HAP::MessageError("HAP: Could not open vertex file\n");
+				HAP::MessageWarning("Could not open vertex file\n");
 			}
 
 			else
@@ -356,7 +357,7 @@ namespace
 				PathStripPathA(actualname);
 				PathRemoveExtensionA(actualname);
 
-				HAP::MessageNormal("HAP: Loaded map \"%s\"\n", actualname);
+				HAP::MessageNormal("Loaded map \"%s\"\n", actualname);
 
 				/*
 					This memory is not used anymore
@@ -386,7 +387,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapDocSave", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -408,7 +409,7 @@ namespace
 			{
 				SharedData.VertFilePtr = nullptr;
 
-				HAP::MessageError("HAP: Could not create vertex file\n");
+				HAP::MessageWarning("Could not create vertex file\n");
 			}
 
 			char textfilename[1024];
@@ -422,7 +423,7 @@ namespace
 			{
 				SaveData.TextFilePtr = nullptr;
 
-				HAP::MessageError("HAP: Could not create vertex text file\n");
+				HAP::MessageWarning("Could not create vertex text file\n");
 			}
 
 			if (vertfile)
@@ -467,7 +468,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapSolidSave", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -512,7 +513,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapFaceCreateFaceFromWinding", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}
@@ -522,7 +523,7 @@ namespace
 
 		void __fastcall Override(void* thisptr, void* edx, PlaneWinding* winding, int flags)
 		{
-			if (SharedData.IsLoading)
+			if (SharedData.IsLoading && SharedData.VertFilePtr)
 			{
 				auto id = MapFace::GetFaceID(thisptr);
 
@@ -530,15 +531,13 @@ namespace
 
 				if (sourceface)
 				{
-					for (size_t i = 0; i < winding->Numpoints; i++)
-					{
-						winding->Points[i] = sourceface->Points[i];
-					}
+					auto size = sourceface->Points.size() * sizeof(Vector3);
+					std::memcpy(winding->Points, sourceface->Points.data(), size);
 				}
 
 				else
 				{
-					HAP::MessageError("HAP: No saved face with id %d\n", id);
+					HAP::MessageWarning("No saved face with id %d\n", id);
 				}
 
 				flags = 0;
@@ -563,7 +562,7 @@ namespace
 
 		HAP::HookModuleMask<ThisFunction> ThisHook("hammer_dll.dll", "MapFaceSave", Override, []()
 		{
-			if (HAP::IsGame(L"Counter-Strike Global Offensive"))
+			if (HAP::IsCSGO())
 			{
 				return PatternCSGO;
 			}

@@ -13,28 +13,20 @@ namespace
 		struct
 		{
 			HANDLE StdOutHandle = INVALID_HANDLE_VALUE;
-			WORD DefaultAttributes;
 
 			bool IsValid() const
 			{
 				return StdOutHandle != INVALID_HANDLE_VALUE;
 			}
 
-			void Write(const char* message, WORD attributes = 0)
+			void Write(const char* message)
 			{
 				if (!IsValid())
 				{
 					return;
 				}
 
-				if (attributes > 0)
-				{
-					SetConsoleTextAttribute(StdOutHandle, attributes);
-				}
-
 				WriteConsoleA(StdOutHandle, message, strlen(message), nullptr, nullptr);
-
-				SetConsoleTextAttribute(StdOutHandle, DefaultAttributes);
 			}
 		} Console;
 	};
@@ -97,11 +89,6 @@ void HAP::CreateConsole()
 
 	if (console.IsValid())
 	{
-		CONSOLE_SCREEN_BUFFER_INFO coninfo;
-		GetConsoleScreenBufferInfo(console.StdOutHandle, &coninfo);
-
-		console.DefaultAttributes = coninfo.wAttributes;
-
 		SetConsoleTitleA("HammerPatch Console");
 		ShowWindow(GetConsoleWindow(), SW_SHOWMINNOACTIVE);
 	}
@@ -113,11 +100,11 @@ void HAP::CreateModules()
 
 	if (res != MH_OK)
 	{
-		MessageError("HAP: Failed to initialize hooks\n");
+		MessageWarning("Failed to initialize hooks\n");
 		throw res;
 	}
 
-	MessageNormal("HAP: Creating %d modules\n", MainApplication.Modules.size());
+	MessageNormal("Creating %d modules\n", MainApplication.Modules.size());
 
 	for (auto module : MainApplication.Modules)
 	{
@@ -126,7 +113,7 @@ void HAP::CreateModules()
 
 		if (res != MH_OK)
 		{
-			MessageError("HAP: Could not enable module \"%s\": \"%s\"\n", name, MH_StatusToString(res));
+			MessageWarning("Could not enable module \"%s\": \"%s\"\n", name, MH_StatusToString(res));
 			throw res;
 		}
 
@@ -135,7 +122,7 @@ void HAP::CreateModules()
 
 		MH_EnableHook(function);
 
-		MessageNormal("HAP: Enabled module \"%s\" -> %s @ 0x%p\n", name, library, function);
+		MessageNormal("Enabled module \"%s\" -> %s @ 0x%p\n", name, library, function);
 	}
 }
 
@@ -158,13 +145,7 @@ void HAP::MessageNormal(const char* message)
 
 void HAP::MessageWarning(const char* message)
 {
-	MainApplication.Console.Write(message, FOREGROUND_RED | FOREGROUND_GREEN);
-}
-
-void HAP::MessageError(const char* message)
-{
-	MainApplication.Console.Write(message, FOREGROUND_RED);
-	FlashWindow(GetConsoleWindow(), true);
+	MainApplication.Console.Write(message);
 }
 
 void HAP::AddShutdownFunction(ShutdownFuncType function)
@@ -186,7 +167,7 @@ void HAP::CallStartupFunctions()
 		return;
 	}
 
-	MessageNormal("HAP: Calling %d startup procedures\n", funcs.size());
+	MessageNormal("Calling %d startup procedures\n", funcs.size());
 
 	for (const auto& entry : funcs)
 	{
@@ -197,7 +178,7 @@ void HAP::CallStartupFunctions()
 			throw entry.Name;
 		}
 
-		MessageNormal("HAP: Startup procedure \"%s\" passed\n", entry.Name);
+		MessageNormal("Startup procedure \"%s\" passed\n", entry.Name);
 	}
 }
 
@@ -258,4 +239,9 @@ bool HAP::IsGame(const wchar_t* test)
 	auto name = PathFindFileNameW(directory);
 
 	return _wcsicmp(name, test) == 0;
+}
+
+bool HAP::IsCSGO()
+{
+	return IsGame(L"Counter-Strike Global Offensive");
 }

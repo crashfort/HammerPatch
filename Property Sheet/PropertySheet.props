@@ -1,18 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros">
-    <HAP_MINHOOK_INCLUDE>C:\VS\3rd Party Libs\MinHook\include\</HAP_MINHOOK_INCLUDE>
-    <HAP_MINHOOK_LIB>C:\VS\3rd Party Libs\MinHook\lib\</HAP_MINHOOK_LIB>
-  </PropertyGroup>
+  <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup />
-  <ItemGroup>
-    <BuildMacro Include="HAP_MINHOOK_INCLUDE">
-      <Value>$(HAP_MINHOOK_INCLUDE)</Value>
-    </BuildMacro>
-    <BuildMacro Include="HAP_MINHOOK_LIB">
-      <Value>$(HAP_MINHOOK_LIB)</Value>
-    </BuildMacro>
-  </ItemGroup>
+  <ItemGroup />
 </Project>

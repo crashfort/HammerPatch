@@ -39,14 +39,6 @@ namespace HAP
 		Message(MessageWarning, format, std::forward<Args>(args)...);
 	}
 
-	void MessageError(const char* message);
-
-	template <typename... Args>
-	void MessageError(const char* format, Args&&... args)
-	{
-		Message(MessageError, format, std::forward<Args>(args)...);
-	}
-
 	using ShutdownFuncType = void(*)();
 	void AddShutdownFunction(ShutdownFuncType function);
 
@@ -198,4 +190,5 @@ namespace HAP
 	};
 
 	bool IsGame(const wchar_t* test);
+	bool IsCSGO();
 }
